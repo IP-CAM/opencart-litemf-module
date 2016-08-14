@@ -31,24 +31,30 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput(json_encode($jsonCostArray));
 	}
 
-	public function getPoint() {
+	public function getDeliveryPoints() {
 		$points = [];
 		$json = array();
 		$this->load->model('setting/setting');
-		$apiKey = 'e2f1a1ec2c5c51867d757879ad1f8789cb20c223';
-		if (isset($this->request->get['kladr'])) {
-			$data = '{
-					"id":"56531b1f08ba7",
-					"method":"getDeliveryPointList",
-					"limit":"9999",
-					"params":{
-						"filter":{
-							"kladr":"'.substr($this->request->get['kladr'], 0, 11).'"
-						}
-					}
-				}';
-			$json = $this->sendRequest($data, $apiKey);
+		$apiKey = $this->config->get('litemf_api_key');
+		$kladrResponse = $this->getKladr($this->request->get['city']);
+		$kladr = null;
+		foreach($kladrResponse->suggestions as $suggestion) {
+			if ($suggestion->data->city_kladr_id == $suggestion->data->kladr_id) {
+				$kladr = $suggestion->data->kladr_id;
+				break;
+			}
 		}
+		$data = '{
+				"id":"56531b1f08ba7",
+				"method":"getDeliveryPointList",
+				"limit":"9999",
+				"params":{
+					"filter":{
+						"kladr":"'.substr($kladr, 0, 11).'"
+					}
+				}
+			}';
+		$json = $this->sendRequest($data, $apiKey);
 		$jsonArray = json_decode($json);
 		foreach ($jsonArray->result->data as $point) {
 			$data = '{
@@ -57,8 +63,8 @@ class ControllerCheckoutLitemf extends Controller {
 			"params":{
 				"country_from":373,
 				"country_to":3159,
-				"weight":1500,
-				"zone":"'.substr($this->request->get['kladr'], 0, 11).'",
+				"weight":'.$this->cart->getWeight().',
+				"zone":"'.substr($kladr, 0, 11).'",
 				"delivery_point":"'.$point->id.'",
 				"filter":{
 				}
@@ -96,29 +102,30 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput($methods);
 	}
 
-	public function getKladr($state, $city) {
-		$url = 'https://dadata.ru/api/v2/clean';
+	/**
+	 * @param mixed $city
+	 * @return mixed|null
+	 */
+	public function getKladr($city)
+	{
+		$url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address';
 		$token = 'a5fdcbf8e1ea0b34803ee92b4f433344915cab0c';
-		$secret = '712ccc777043d8fdbead3afbdf4bb2be79602fec';
 		$data = array(
-			"structure" => array("ADDRESS"),
-			"data" => array(array("Воронежская область, Воронеж"))
+			"query" => $city
 		);
-
 		$options = array(
 			'http' => array(
 				'method'  => 'POST',
 				'header'  => array(
 					'Content-type: application/json',
-					'Authorization: Token ' . $token,
-					'X-Secret: ' . $secret
+					'Authorization: Token ' . $token
 				),
 				'content' => json_encode($data),
 			),
 		);
 		$context = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
-		return $result;
+		return json_decode($result);
 	}
 
 

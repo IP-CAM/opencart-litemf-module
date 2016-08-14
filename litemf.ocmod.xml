@@ -7,48 +7,39 @@
 	<author><![CDATA[Mihail Bogdanov]]></author>
 	<file path="catalog/view/theme/*/template/checkout/shipping_method.tpl">
 		<operation error="skip">
-			<search><![CDATA[<?php echo $quote['title']; ?> - <?php echo $quote['text']; ?></label>]]></search>
-			<add position="replace"><![CDATA[ <?php echo $quote['title']; ?>
-				<?php if ($quote['code'] != 'litemf_delivery.litemf_delivery') { ?>
-				  -
-				  <?php echo $quote['text']; ?>
-				<?php } ?>
-			  </label>
-			  <?php if ($quote['code'] == 'litemf_delivery.litemf_delivery') { ?>
-			  <style>
-			  @keyframes spinner {
+			<search><![CDATA[<div class="alert alert-danger"><?php echo $shipping_method['error']; ?></div>]]></search>
+			<add position="after" offset="3"><![CDATA[
+				<style>
+					@keyframes spinner {
 					to {transform: rotate(360deg);}
-				}
-
-				@-webkit-keyframes spinner {
+					}
+					@-webkit-keyframes spinner {
 					to {-webkit-transform: rotate(360deg);}
-				}
-
-				.spinner {
-					min-width: 24px;
-					min-height: 24px;
-				}
-
-				.spinner:before {
-					content: 'Loading…';
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					width: 16px;
-					height: 16px;
-					margin-top: -10px;
-					margin-left: -10px;
-				}
-
-				.spinner:not(:required):before {
-					content: '';
-					border-radius: 50%;
-					border: 2px solid rgba(0, 0, 0, .3);
-					border-top-color: rgba(0, 0, 0, .6);
-					animation: spinner .6s linear infinite;
-					-webkit-animation: spinner .6s linear infinite;
-				}
-			  </style>
+					}
+					.spinner {
+						min-width: 24px;
+						min-height: 24px;
+					}
+					.spinner:before {
+						content: 'Loading…';
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						width: 16px;
+						height: 16px;
+						margin-top: -10px;
+						margin-left: -10px;
+					}
+					.spinner:not(:required):before {
+						content: '';
+						border-radius: 50%;
+						border: 2px solid rgba(0, 0, 0, .3);
+						border-top-color: rgba(0, 0, 0, .6);
+						animation: spinner .6s linear infinite;
+						-webkit-animation: spinner .6s linear infinite;
+					}
+				</style>
+				<div id="shiptor_delivery_block">
 				  <div class="row">
 					  	<div class="col-md-offset-1 col-md-9">
 							<p><input type="checkbox" id="check_passport" name="passport">Заполнить паспортные данные заранее?</p>
@@ -75,6 +66,10 @@
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-region">Регион</label>
 								<input type="text" name="litemf[region]" id="input-litemf-region" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Регион должен быть от 3 до 64 символов!" class="form-control">
+							</div>
+							<div class="form-group required">
+								<label class="control-label" for="input-litemf-city">Город</label>
+								<input type="text" name="litemf[city]" id="input-litemf-city" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+"  data-error="Город должен быть от 3 до 64 символов!" class="form-control">
 							</div>
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-zip_code">Индекс</label>
@@ -110,26 +105,6 @@
 							<input type="hidden" name="litemf[delivery_point_id]">
 							<input type="hidden" name="litemf[kladr]">
 						</div>
-					  </div>
-					  <div class="col-md-12">
-							<div class="form-group col-md-5 required">
-								<input type="text" name="litemf[city]" id="litemf_addresses" placeholder="Город" class="form-control">
-							</div>
-							<div class="col-md-offset-1 col-md-3">
-								<div class="list-group" style="padding-top: 5px;">
-									<h4 class="list-group-item-heading">
-										<input type="radio" id="method-courier" name="method_id" data-type="courier" disabled>
-										<span class="badge" id="courier-price-show">Курьером</span>
-									</h4>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div class="list-group" style="padding-top: 5px;">
-									<h4 class="list-group-item-heading">
-										<input type="radio" id="method-terminal" name="method_id" data-type="terminal" disabled>
-										<span class="badge" id="method-terminal-show">Пункт выдачи</span>
-								</div>
-							</div>
 					  </div>
 				  </div>
 				  	<div class="row">
@@ -172,7 +147,8 @@
 							</div>
 						</div>
 					</div>
-			  <?php } ?>]]></add>
+				</div>
+			 ]]></add>
 		</operation>
 	</file>
 	<file path="catalog/view/theme/*/template/checkout/checkout.tpl">
@@ -192,7 +168,6 @@
 								status = false
 							}
 						}
-
 					});
 					if (!status) {
 						return false;
@@ -219,20 +194,28 @@
 				}
 			]]></add>
 		</operation>
+		<operation error="skip">
+			<search><![CDATA[data: $('#collapse-shipping-method input[type=\'radio\']:checked, #collapse-shipping-method textarea'),]]></search>
+			<add position="replace"><![CDATA[
+				        data: $('#collapse-shipping-method input[type=\'radio\']:checked, #collapse-shipping-method textarea, input[name*="litemf"], input[name*="point"][type=\'radio\']:checked'),
+			]]></add>
+		</operation>
 	</file>
 	<file path="catalog/controller/checkout/shipping_method.php">
 		<operation>
 			<search><![CDATA[$this->response->addHeader('Content-Type: application/json');]]></search>
 			<add position="before"><![CDATA[
-				if ($this->request->post['shipping_method'] == 'litemf_delivery.litemf_delivery' && isset($this->request->post['point'])) {
+				$shiptorMethod =  explode(".", $this->request->post['shipping_method']);
+				if ($shiptorMethod[0] == 'litemf_delivery' && isset($this->request->post['point'])) {
 					$this->session->data['shipping_method']['cost'] = round($this->request->post['point'],2);
 					$this->session->data['shipping_method']['text'] = $this->currency->format($this->request->post['point'], $this->config->get('config_currency'));
 					$this->session->data['litemf'] = $this->request->post['litemf'];
 					if (isset($this->request->post['courier'])) {
 						$this->session->data['courier'] = $this->request->post['courier'];
 					}
-				} elseif ($this->request->post['shipping_method'] == 'litemf_delivery.litemf_delivery' && !isset($this->request->post['point'])) {
-					$json['error']['warning'] = $this->language->get('error_shipping');
+				} elseif ($shiptorMethod[0] == 'litemf_delivery' && !isset($this->request->post['point'])) {
+					$this->session->data['litemf'] = $this->request->post['litemf'];
+					$this->session->data['courier'] = $this->request->post['courier'];
 				}
 			]]></add>
 		</operation>
@@ -241,7 +224,8 @@
 		<operation>
 			<search><![CDATA[$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);]]></search>
 			<add position="after"><![CDATA[
-				if ($this->session->data['shipping_method']['code'] == 'litemf_delivery.litemf_delivery') {
+				$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
+				if ($shiptorMethod[0] == 'litemf_delivery') {
 					$litemf_data = [];
 					$litemf_data['order_id'] = $this->session->data['order_id'];
 					$litemf_data['user_id'] = $order_data['customer_id'];
@@ -271,6 +255,7 @@
 			<search><![CDATA[<div class="buttons">]]></search>
 			<add position="after" offset="5"><![CDATA[
 			<script type="text/javascript">
+				var shippingMethods = $('input[type=radio][name=shipping_method]');
 				var map;
 				var myCollection;
 				function createMap() {
@@ -343,102 +328,81 @@
 				}
 				</script>
 			<script type="text/javascript">
+					function showBlockShiptor() {
+						var checkedMethod = $('input[name="shipping_method"]:checked').val();
+						var exploded = checkedMethod.split('.');
+						if (exploded[0] == 'litemf_delivery') {
+							if($('input[type=text][name="litemf[first_name]"]').val() == '') {
+								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="firstname"]').val());
+							}
+							if($('input[type=text][name="litemf[last_name]"]').val() == '') {
+								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="lastname"]').val());
+							}
+							if($('input[type=text][name="litemf[city]"]').val() == '') {
+								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="city"]').val());
+								$('input[type=text][name="litemf[city]"]').trigger('change');
+							}
+							if($('input[type=text][name="litemf[zip_code]"]').val() == '') {
+								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="postcode"]').val());
+							}
+							if($('input[type=text][name="litemf[region]"]').val() == '') {
+								$('input[type=text][name="litemf[region]"]').val($('#input-shipping-zone option:selected').text());
+							}
+							if($('input[type=text][name="litemf[phone]"]').val() == '') {
+								$('input[type=text][name="litemf[phone]"]').val($('input[type=text][name="telephone"]').val());
+							}
+							$('#shiptor_delivery_block').show();
+							$('input[type=hidden][name="litemf[delivery_method_id]"]').val($('input[name="shipping_method"]:checked').data('id'));
+							if ($('input[name="shipping_method"]:checked').data('category') == 'courier') {
+								$('#point-select').hide();
+								$('#courier-price').find('input').prop("checked", true);
+								$('input[type=hidden][name="litemf[delivery_point_id]"]').val('courier');
+								$('#courier-field').show();
+								$('#point-select').hide();
+								$('#YMapsID').hide();
+							}
+							if ($('input[name="shipping_method"]:checked').data('category') == 'terminal') {
+								getDeliveryPoints($('input[type=text][name="litemf[city]"]').val(), $('input[name="shipping_method"]:checked').data('id'));
+								$('#point-select').show();
+								$('#YMapsID').show();
+								$('#courier-price').hide();
+								$('#courier-field').hide();
+							}
+						} else {
+							$('#shiptor_delivery_block').hide();
+						}
+					};
 				  $.ajax({
 					url: 'index.php?route=checkout/litemf/getDeliveryMethod',
 					dataType: 'json',
 					success: function (json) {
 					  console.log(json)
 					  $.each(json.result.data, function( index, value ) {
-					  	if(value.delivery_type == 'terminal') {
-					  		$('#method-terminal').val(value.id)
-					  	}
-					  	if(value.delivery_type == 'courier') {
-					  		$('#method-courier').val(value.id)
-					  	}
+					  	 $.each(shippingMethods, function() {
+							  var explodedMethod = this.value.split('.');
+							  if (explodedMethod[0] == 'litemf_delivery') {
+								  var explodedMethodId = explodedMethod[1].split('_');
+								  if (explodedMethodId[2] == value.id) {
+									  $(this).attr('data-category', value.delivery_type);
+									  $(this).attr('data-id', value.id);
+								  }
+							  }
+						  });
 					  });
+					  shippingMethods.change(function() {
+						  if ($(this).is(":checked")) {
+							  showBlockShiptor();
+						  }
+					  });
+					  shippingMethods.trigger('change');
 
 					},
 					error: function (xhr, ajaxOptions, thrownError) {
 					  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 					}
 				  });
-			  $("#litemf_addresses").suggestions({
-				serviceUrl: "https://suggestions.dadata.ru/suggestions/api/4_1/rs",
-				token: "a5fdcbf8e1ea0b34803ee92b4f433344915cab0c",
-				type: "ADDRESS",
-				count: 5,
-				/* Вызывается, когда пользователь выбирает одну из подсказок */
-				onSelect: function(suggestion) {
-				  console.log(suggestion);
-					$.ajax({
-						url: 'index.php?route=checkout/litemf/getPoint&kladr=' + suggestion.data.kladr_id,
-						dataType: 'json',
-						beforeSend: function() {
-							 $('#loader').show();
-						},
-						complete: function(){
-							 $('#loader').hide();
-						 },
-						success: function (json) {
-						    $('#point-select').text('');
-						    destroyMap();
-						    createMap();
-				  			setTown(suggestion.data.geo_lat, suggestion.data.geo_lon);
-							$.each(json, function( index, value ) {
-								do_search(value);
-								var gps = value.gps.split(',')
-								var text = '<div class="list-group-item" style="padding-left:25px;">';
-								  text += '<h4 class="list-group-item-heading"><input type="radio" name="point" value="' + value.cost + '" data-point-id="' + value.id + '" id="pvz_label_' + value.id + '" onClick="return go_to('+gps[0]+', '+gps[1]+',\''+value.name+'\');"><span class="badge">Цена: ' + value.price + '</span> ' + value.name + '</h4>';
-								  text += '<span>' + value.phone + '</span>';
-								  text += '<p class="list-group-item-text">' + value.address + '</p>';
-								  text += '<p class="list-group-item-text">' + value.work_schedule + '</p></div>';
-								$('#point-select').append(text);
-								$('#method-terminal').prop('disabled', false);
-								if (index == 1) {
-								 	textShow = 'Пункт выдачи: ' + value.price;
-									$('#method-terminal-show').text(textShow);
-								}
-							});
-						},
-						error: function (xhr, ajaxOptions, thrownError) {
-						  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-						}
-					});
-					$.ajax({
-					  url: 'index.php?route=checkout/litemf/getCost&kladr=' + suggestion.data.kladr_id,
-					  dataType: 'json',
-					  success: function (json) {
-					  	if(json.status == true) {
-							text = '<p><input type="radio" name="point" value="' + json.cost + '" data-point-id="courier" id="point-courier">Стоимость доставки ' + json.price + '</p>';
-							textShow = 'Курьером: ' + json.price;
-							$('#courier-price-show').text(textShow);
-							$('#courier-price').append(text);
-							$('#method-courier').prop('disabled', false);
-						}
-					  },
-					  error: function (xhr, ajaxOptions, thrownError) {
-						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-					  }
-					});
-				}
-			  });
+
 			  $(document).ready(function() {
-				$('input[type=radio][name=method_id]').change(function() {
-				$('input[type=hidden][name="litemf[delivery_method_id]"]').val($(this).val());
-					if ($(this).data('type') == 'courier') {
-						$('#point-select').hide();
-						$('#courier-price').find('input').prop("checked", true);
-						$('input[type=hidden][name="litemf[delivery_point_id]"]').val('courier');
-						$('#courier-field').show();
-						$('#YMapsID').hide();
-					}
-					else if ($(this).data('type') == 'terminal') {
-						$('#courier-price').hide();
-						$('#courier-field').hide();
-						$('#point-select').show();
-						$('#YMapsID').show();
-					}
-				});
 				$('#point-select').on('change', 'input[type=radio][name=point]', function() {
 					if ($(this).data('point-id') != 'courier') {
 						$('input[type=hidden][name="litemf[delivery_point_id]"]').val($(this).data('point-id'))
@@ -452,6 +416,44 @@
 					}
 				});
 			  });
+
+			   function getDeliveryPoints(city, shippingMethodId){
+				  	$.ajax({
+						url: 'index.php?route=checkout/litemf/getDeliveryPoints&city=' + city + '&id=' + shippingMethodId,
+						dataType: 'json',
+						beforeSend: function() {
+							 $('#loader').show();
+						},
+						complete: function(){
+							 $('#loader').hide();
+						 },
+						success: function (json) {
+							 $('#point-select').text('');
+						    destroyMap();
+						    createMap();
+						    var myGeocoder = ymaps.geocode(city, {results: 1});
+							myGeocoder.then(function (res) {
+				    			var firstGeoObject = res.geoObjects.get(0);
+								coords = firstGeoObject.geometry.getCoordinates();
+								console.log(coords[0]);
+				  				setTown(coords[0], coords[1]);
+				  				$.each(json, function( index, value ) {
+									do_search(value);
+									var gps = value.gps.split(',');
+									var text = '<div class="list-group-item" style="padding-left:25px;">';
+										  text += '<h4 class="list-group-item-heading"><input type="radio" name="point" value="' + value.cost + '" data-point-id="' + value.id + '" id="pvz_label_' + value.id + '" onClick="return go_to('+gps[0]+', '+gps[1]+',\''+value.name+'\');"><span class="badge">Цена: ' + value.price + '</span> ' + value.name + '</h4>';
+										  text += '<span>' + value.phone + '</span>';
+										  text += '<p class="list-group-item-text">' + value.address + '</p>';
+										  text += '<p class="list-group-item-text">' + value.work_schedule + '</p></div>';
+									$('#point-select').append(text);
+								});
+							});
+						},
+						error: function (xhr, ajaxOptions, thrownError) {
+						  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+						}
+					});
+				  }
 			</script>]]></add>
 		</operation>
 	</file>

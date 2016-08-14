@@ -18,13 +18,31 @@ class ModelShippingLitemfDelivery extends Model {
 		if ($status) {
 			$quote_data = array();
 
-			$quote_data['litemf_delivery'] = array(
-				'code'         => 'litemf_delivery.litemf_delivery',
-				'title'        => $this->language->get('text_description'),
-				'cost'         => 0.00,
-				'tax_class_id' => 0,
-				'text'         => $this->currency->format(0.00, $this->session->data['currency'])
-			);
+			$kladrResponse = $this->getKladr($this->session->data['shipping_address']['city']);
+			try {
+				$kladr = '';
+				foreach($kladrResponse->suggestions as $suggestion) {
+					if ($suggestion->data->city_kladr_id == $suggestion->data->kladr_id) {
+						$kladr = $suggestion->data->kladr_id;
+						break;
+					}
+				}
+				$weight = $this->cart->getWeight();
+				$methods = $this->getDeliveryMethod();
+				foreach($methods->result->data as $method) {
+					$cost = $this->getCost($weight, $kladr, $method->id);
+					$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
+					if ((string)$cost != '') {
+						$quote_data['litemf_delivery_'.$method->id] = array(
+							'code'         => 'litemf_delivery.litemf_delivery_'.$method->id,
+							'title'        => $method->name,
+							'cost'         => $cost,
+							'tax_class_id' => $this->config->get('shiptor_delivery_tax_class_id'),
+							'text'         => $this->currency->format($this->tax->calculate($cost, $this->config->get('shiptor_delivery_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
+						);
+					}
+				}
+			} catch (Exception $e) {}
 
 			$method_data = array(
 				'code'       => 'litemf_delivery',
@@ -46,5 +64,83 @@ class ModelShippingLitemfDelivery extends Model {
 		if (isset($data['courier']) && is_null($poinId)) {
 			$this->db->query("INSERT INTO `" . DB_PREFIX . "litemf_courier_address` SET litemf_orders = '" . (int)$litemf_order_id . "', street = '" . $data['courier']['street'] . "', house = '" . $data['courier']['house'] . "', email = '" . $data['courier']['email'] . "', phone = '" . $data['courier']['phone'] . "', number = '" . $data['courier']['number'] . "'");
 		}
+	}
+
+	protected function sendRequest($data, $apiKey) {
+		$ch = curl_init('http://api.dev.litemf.com/v2/rpc');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json',
+				'X-Auth-Api-Key: ' . $apiKey,
+				'Content-Length: ' . strlen($data))
+		);
+		curl_setopt($ch, CURLOPT_POSTFIELDS,   $data );
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST,  'POST');
+
+		$result = curl_exec($ch);
+
+		return $result;
+	}
+
+	public function getCost($weight, $kladr, $deliveryMethodId) {
+		$this->load->model('setting/setting');
+		$apiKey = $this->config->get('litemf_api_key');
+		$data = '{
+			"id":"56f1089cc9541",
+			"method":"getDeliveryPrice",
+			"params":{
+				"country_from":373,
+				"country_to":3159,
+				"weight":'.$weight.',
+				"zone":"'.substr($kladr, 0, 11).'",
+				"filter":{
+					"delivery_method":['.$deliveryMethodId.']
+				}
+			}
+		}';
+		$json = $this->sendRequest($data, $apiKey);
+		$jsonCostArray = json_decode($json);
+		return $jsonCostArray->result->data[0]->price;
+	}
+
+	public function getDeliveryMethod() {
+		$this->load->model('setting/setting');
+		$apiKey = $this->config->get('litemf_api_key');
+		$data = '{
+				"id":"55ddc54443838",
+				"method":"getDeliveryMethod",
+				"params":{
+					"country_from":373,
+					"country_to":3159
+				}
+			}';
+		$methods = $this->sendRequest($data, $apiKey);
+		return json_decode($methods);
+	}
+
+	/**
+	 * @param mixed $city
+	 * @return mixed|null
+	 */
+	public function getKladr($city)
+	{
+		$url = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address';
+		$token = 'a5fdcbf8e1ea0b34803ee92b4f433344915cab0c';
+		$data = array(
+			"query" => $city
+		);
+		$options = array(
+			'http' => array(
+				'method'  => 'POST',
+				'header'  => array(
+					'Content-type: application/json',
+					'Authorization: Token ' . $token
+				),
+				'content' => json_encode($data),
+			),
+		);
+		$context = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		return json_decode($result);
 	}
 }

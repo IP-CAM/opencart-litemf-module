@@ -30,8 +30,11 @@ class ModelShippingLitemfDelivery extends Model {
 				$weight = $this->cart->getWeight();
 				$methods = $this->getDeliveryMethod();
 				foreach($methods->result->data as $method) {
-					$cost = $this->getCost($weight, $kladr, $method->id);
-					$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
+					$cost = '';
+					if (!empty($kladr)) {
+						$cost = $this->getCost($weight, $kladr, $method->id);
+						$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
+					}
 					if ((string)$cost != '') {
 						$quote_data['litemf_delivery_'.$method->id] = array(
 							'code'         => 'litemf_delivery.litemf_delivery_'.$method->id,

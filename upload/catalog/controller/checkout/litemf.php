@@ -3,7 +3,7 @@ class ControllerCheckoutLitemf extends Controller {
 	public function getCost() {
 		$json = array();
 		$this->load->model('setting/setting');
-		$apiKey = 'e2f1a1ec2c5c51867d757879ad1f8789cb20c223';
+		$apiKey = $this->config->get('litemf_api_key');;
 		if (isset($this->request->get['kladr'])) {
 			$data = '{
 				"id":"56f1089cc9541",
@@ -88,7 +88,7 @@ class ControllerCheckoutLitemf extends Controller {
 
 	public function getDeliveryMethod() {
 		$this->load->model('setting/setting');
-		$apiKey = 'e2f1a1ec2c5c51867d757879ad1f8789cb20c223';
+		$apiKey = $this->config->get('litemf_api_key');
 		$data = '{
 				"id":"55ddc54443838",
 				"method":"getDeliveryMethod",
@@ -130,7 +130,7 @@ class ControllerCheckoutLitemf extends Controller {
 
 
 	protected function sendRequest($data, $apiKey) {
-		$ch = curl_init('http://api.dev.litemf.com/v2/rpc');
+		$ch = curl_init('http://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',

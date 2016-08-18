@@ -17,43 +17,45 @@ class ModelShippingLitemfDelivery extends Model {
 
 		if ($status) {
 			$quote_data = array();
-
-			$kladrResponse = $this->getKladr($this->session->data['shipping_address']['city']);
-			try {
-				$kladr = '';
-				foreach($kladrResponse->suggestions as $suggestion) {
-					if ($suggestion->data->city_kladr_id == $suggestion->data->kladr_id) {
-						$kladr = $suggestion->data->kladr_id;
-						break;
+			if (!empty($this->session->data['shipping_address']['city'])) {
+				$kladrResponse = $this->getKladr($this->session->data['shipping_address']['city']);
+				try {
+					$kladr = '';
+					foreach ($kladrResponse->suggestions as $suggestion) {
+						if ($suggestion->data->city_kladr_id == $suggestion->data->kladr_id) {
+							$kladr = $suggestion->data->kladr_id;
+							break;
+						}
 					}
+					$weight = $this->cart->getWeight();
+					$methods = $this->getDeliveryMethod();
+					foreach ($methods->result->data as $method) {
+						$cost = '';
+						if (!empty($kladr)) {
+							$cost = $this->getCost($weight, $kladr, $method->id);
+							$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
+						}
+						if ((string)$cost != '') {
+							$quote_data['litemf_delivery_' . $method->id] = array(
+								'code' => 'litemf_delivery.litemf_delivery_' . $method->id,
+								'title' => $method->name,
+								'cost' => $cost,
+								'tax_class_id' => $this->config->get('shiptor_delivery_tax_class_id'),
+								'text' => $this->currency->format($this->tax->calculate($cost, $this->config->get('shiptor_delivery_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
+							);
+						}
+					}
+				} catch (Exception $e) {
 				}
-				$weight = $this->cart->getWeight();
-				$methods = $this->getDeliveryMethod();
-				foreach($methods->result->data as $method) {
-					$cost = '';
-					if (!empty($kladr)) {
-						$cost = $this->getCost($weight, $kladr, $method->id);
-						$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
-					}
-					if ((string)$cost != '') {
-						$quote_data['litemf_delivery_'.$method->id] = array(
-							'code'         => 'litemf_delivery.litemf_delivery_'.$method->id,
-							'title'        => $method->name,
-							'cost'         => $cost,
-							'tax_class_id' => $this->config->get('shiptor_delivery_tax_class_id'),
-							'text'         => $this->currency->format($this->tax->calculate($cost, $this->config->get('shiptor_delivery_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
-						);
-					}
-				}
-			} catch (Exception $e) {}
 
-			$method_data = array(
-				'code'       => 'litemf_delivery',
-				'title'      => $this->language->get('text_title'),
-				'quote'      => $quote_data,
-				'sort_order' => $this->config->get('litemf_delivery_sort_order'),
-				'error'      => false
-			);
+				$method_data = array(
+					'code' => 'litemf_delivery',
+					'title' => $this->language->get('text_title'),
+					'quote' => $quote_data,
+					'sort_order' => $this->config->get('litemf_delivery_sort_order'),
+					'error' => false
+				);
+			}
 		}
 
 		return $method_data;

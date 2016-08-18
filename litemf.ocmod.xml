@@ -523,6 +523,10 @@
 								<input type="text" name="litemf[region]" value="<?php if (isset($litemf)) echo $litemf['region']; ?>" id="input-litemf-region" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Регион должен быть от 3 до 64 символов!" class="form-control">
 							</div>
 							<div class="form-group required">
+								<label class="control-label" for="input-litemf-city">Город</label>
+								<input type="text" name="litemf[city]" value="<?php if (isset($litemf)) echo $litemf['city']; ?>" id="input-litemf-city" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+"  data-error="Город должен быть 6 символов!" class="form-control">
+							</div>
+							<div class="form-group required">
 								<label class="control-label" for="input-litemf-zip_code">Индекс</label>
 								<input type="text" name="litemf[zip_code]" value="<?php if (isset($litemf)) echo $litemf['zip_code']; ?>" id="input-litemf-zip_code" pattern="[0-9]{6}"  data-error="Индекс должен быть 6 символов!" class="form-control">
 							</div>
@@ -556,26 +560,6 @@
 							<input type="hidden" name="litemf[delivery_point_id]" value="<?php if (isset($litemf)) echo $litemf['delivery_point_id']; ?>">
 							<input type="hidden" name="litemf[kladr]" value="<?php if (isset($litemf)) echo $litemf['kladr']; ?>">
 						</div>
-					  </div>
-					  <div class="col-md-12">
-							<div class="form-group col-md-5 required">
-								<input type="text" name="litemf[city]" value="<?php if (isset($litemf)) echo $litemf['city']; ?>" id="litemf_addresses" placeholder="Город" class="form-control">
-							</div>
-							<div class="col-md-offset-1 col-md-3">
-								<div class="list-group" style="padding-top: 5px;">
-									<h4 class="list-group-item-heading">
-										<input type="radio" id="method-courier" name="method_id" data-type="courier" disabled>
-										<span class="badge" id="courier-price-show">Курьером</span>
-									</h4>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div class="list-group" style="padding-top: 5px;">
-									<h4 class="list-group-item-heading">
-										<input type="radio" id="method-terminal" name="method_id" data-type="terminal" disabled>
-										<span class="badge" id="method-terminal-show">Пункт выдачи</span>
-								</div>
-							</div>
 					  </div>
 				  </div>
 				  	<div class="row">
@@ -624,24 +608,33 @@
 						var checkedMethod = $('input[name="shipping_method"]:checked').val();
 						var exploded = checkedMethod.split('.');
 						if (exploded[0] == 'litemf_delivery') {
-							if($('input[type=text][name="litemf[first_name]"]').val() == '') {
-								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="firstname"]').val());
+							if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="shipping_address[firstname]"]').val() != '' && $('input[type=text][name="shipping_address[firstname]"]').val() != undefined) {
+								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="shipping_address[firstname]"]').val());
+							} else if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="payment_address[firstname]"]').val() != '') {
+								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="payment_address[firstname]"]').val());
 							}
-							if($('input[type=text][name="litemf[last_name]"]').val() == '') {
-								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="lastname"]').val());
+							if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="shipping_address[lastname]"]').val() != '' && $('input[type=text][name="shipping_address[lastname]"]').val() != undefined) {
+								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="shipping_address[lastname]"]').val());
+							} else if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="payment_address[lastname]"]').val() != '') {
+								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="payment_address[lastname]"]').val());
 							}
-							if($('input[type=text][name="litemf[city]"]').val() == '') {
-								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="city"]').val());
-								$('input[type=text][name="litemf[city]"]').trigger('change');
+							if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="shipping_address[city]"]').val() != '' && $('input[type=text][name="shipping_address[city]"]').val() != undefined) {
+								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="shipping_address[city]"]').val());
+							} else if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="payment_address[city]"]').val() != '') {
+								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="payment_address[city]"]').val());
 							}
-							if($('input[type=text][name="litemf[zip_code]"]').val() == '') {
-								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="postcode"]').val());
-							}
-							if($('input[type=text][name="litemf[region]"]').val() == '') {
-								$('input[type=text][name="litemf[region]"]').val($('#input-shipping-zone option:selected').text());
+							if($('input[type=text][name="litemf[region]"]').val() == '' && $('#shipping_address_zone_id option:selected').text() != '') {
+								$('input[type=text][name="litemf[region]"]').val($('#shipping_address_zone_id option:selected').text());
+							} else if($('input[type=text][name="litemf[region]"]').val() == '' && $('#payment_address_zone_id option:selected').text() != '') {
+								$('input[type=text][name="litemf[region]"]').val($('#payment_address_zone_id option:selected').text());
 							}
 							if($('input[type=text][name="litemf[phone]"]').val() == '') {
-								$('input[type=text][name="litemf[phone]"]').val($('input[type=text][name="telephone"]').val());
+								$('input[type=text][name="litemf[phone]"]').val($('input[type=tel][name="customer[telephone]"]').val());
+							}
+							if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() != undefined) {
+								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="shipping_address[postcode]"]').val());
+							} else if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="payment_address[postcode]"]').val() != '') {
+								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="payment_address[postcode]"]').val());
 							}
 							$('#shiptor_delivery_block').show();
 							$('input[type=hidden][name="litemf[delivery_method_id]"]').val($('input[name="shipping_method"]:checked').data('id'));
@@ -654,7 +647,9 @@
 								$('#YMapsID').hide();
 							}
 							if ($('input[name="shipping_method"]:checked').data('category') == 'terminal') {
-								getDeliveryPoints($('input[type=text][name="litemf[city]"]').val(), $('input[name="shipping_method"]:checked').data('id'));
+								if($('input[type=text][name="litemf[city]"]').val() != '') {
+									getDeliveryPoints($('input[type=text][name="litemf[city]"]').val(), $('input[name="shipping_method"]:checked').data('id'));
+								}
 								$('#point-select').show();
 								$('#YMapsID').show();
 								$('#courier-price').hide();
@@ -686,8 +681,7 @@
 							  showBlockShiptor();
 						  }
 					  });
-					  shippingMethods.trigger('change');
-
+					  showBlockShiptor();
 					},
 					error: function (xhr, ajaxOptions, thrownError) {
 					  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -710,7 +704,7 @@
 			  });
               function getDeliveryPoints(city, id){
 				  	$.ajax({
-						url: 'index.php?route=checkout/shiptor_russia/getDeliveryPoints&city=' + city + '&id=' + id,
+						url: 'index.php?route=checkout/litemf/getDeliveryPoints&city=' + city + '&id=' + id,
 						dataType: 'json',
 						beforeSend: function() {
 							 $('#loader').show();
@@ -719,8 +713,8 @@
 							 $('#loader').hide();
 						 },
 						success: function (json) {
-							<?php if (!empty($point)){ ?>
-								var deliveryPointId = <?php echo $point; ?>;
+							<?php if (isset($litemf)) ?>
+								var deliveryPointId = <?php echo $litemf['delivery_point_id']; ?>;
 							<?php } else { ?>;
 								var deliveryPointId = '';
 							<?php } ?>;
@@ -733,7 +727,7 @@
 								coords = firstGeoObject.geometry.getCoordinates();
 								console.log(coords[0]);
 				  				setTown(coords[0], coords[1]);
-				  				$.each(json.points, function( index, value ) {
+				  				$.each(json, function( index, value ) {
 				  					var checked = '';
 				  					if (deliveryPointId == value.id) {
 										checked = 'checked';

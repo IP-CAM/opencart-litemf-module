@@ -619,6 +619,7 @@
 						</div>
 					</div>
 			<script type="text/javascript">
+				var shippingMethods = $('input[type=radio][name=shipping_method]');
 				function showBlockShiptor() {
 						var checkedMethod = $('input[name="shipping_method"]:checked').val();
 						var exploded = checkedMethod.split('.');

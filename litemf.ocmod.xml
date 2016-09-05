@@ -224,17 +224,19 @@
 		<operation>
 			<search><![CDATA[$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);]]></search>
 			<add position="after"><![CDATA[
-				$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
-				if ($shiptorMethod[0] == 'litemf_delivery') {
-					$litemf_data = [];
-					$litemf_data['order_id'] = $this->session->data['order_id'];
-					$litemf_data['user_id'] = $order_data['customer_id'];
-					$litemf_data['passport'] = $this->session->data['litemf'];
-					if (isset($this->session->data['courier'])) {
-						$litemf_data['courier'] = $this->session->data['courier'];
+				if (isset($this->session->data['shipping_method'])) {
+					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
+					if ($shiptorMethod[0] == 'litemf_delivery') {
+						$litemf_data = [];
+						$litemf_data['order_id'] = $this->session->data['order_id'];
+						$litemf_data['user_id'] = $order_data['customer_id'];
+						$litemf_data['passport'] = $this->session->data['litemf'];
+						if (isset($this->session->data['courier'])) {
+							$litemf_data['courier'] = $this->session->data['courier'];
+						}
+						$this->load->model('shipping/litemf_delivery');
+						$this->model_shipping_litemf_delivery->addOrderLitemf($litemf_data);
 					}
-					$this->load->model('shipping/litemf_delivery');
-					$this->model_shipping_litemf_delivery->addOrderLitemf($litemf_data);
 				}
 			]]></add>
 		</operation>
@@ -518,27 +520,27 @@
 								<label class="control-label" for="input-litemf-phone">Телефон</label>
 								<input type="text" name="litemf[phone]" value="<?php if (isset($litemf)) echo $litemf['phone']; ?>"  id="input-litemf-phone" pattern="(\+?\d[- .]*){7,13}" data-error="Номер телефона должен быть от 3 до 13 символов!" class="form-control">
 							</div>
-							<div class="form-group required">
+							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-region">Регион</label>
-								<input type="text" name="litemf[region]" value="<?php if (isset($litemf)) echo $litemf['region']; ?>" id="input-litemf-region" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Регион должен быть от 3 до 64 символов!" class="form-control">
+								<input type="text" name="litemf[region]" value="0" id="input-litemf-region" class="form-control">
 							</div>
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-city">Город</label>
 								<input type="text" name="litemf[city]" value="<?php if (isset($litemf)) echo $litemf['city']; ?>" id="input-litemf-city" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+"  data-error="Город должен быть 6 символов!" class="form-control">
 							</div>
-							<div class="form-group required">
+							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-zip_code">Индекс</label>
-								<input type="text" name="litemf[zip_code]" value="<?php if (isset($litemf)) echo $litemf['zip_code']; ?>" id="input-litemf-zip_code" pattern="[0-9]{6}"  data-error="Индекс должен быть 6 символов!" class="form-control">
+								<input type="text" name="litemf[zip_code]" value="000000" id="input-litemf-zip_code" class="form-control">
 							</div>
 						</div>
 						<div class="col-sm-6">
-							<div class="form-group required">
+							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-street">Улица</label>
-								<input type="text" name="litemf[street]" value="<?php if (isset($litemf)) echo $litemf['street']; ?>" id="input-litemf-street" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Улица должна быть от 3 до 64 символов!" class="form-control">
+								<input type="text" name="litemf[street]" value="0" id="input-litemf-street" class="form-control">
 							</div>
-							<div class="form-group required">
+							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-house">Дом</label>
-								<input type="text" name="litemf[house]" value="<?php if (isset($litemf)) echo $litemf['house']; ?>" id="input-litemf-house" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Дом должен быть от 1 до 10 символов!" class="form-control">
+								<input type="text" name="litemf[house]" value="0" id="input-litemf-house" class="form-control">
 							</div>
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-series">Серия</label>
@@ -606,57 +608,59 @@
 				var shippingMethods = $('input[type=radio][name=shipping_method]');
 				function showBlockShiptor() {
 						var checkedMethod = $('input[name="shipping_method"]:checked').val();
-						var exploded = checkedMethod.split('.');
-						if (exploded[0] == 'litemf_delivery') {
-							if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="shipping_address[firstname]"]').val() != '' && $('input[type=text][name="shipping_address[firstname]"]').val() != undefined) {
-								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="shipping_address[firstname]"]').val());
-							} else if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="payment_address[firstname]"]').val() != '') {
-								$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="payment_address[firstname]"]').val());
-							}
-							if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="shipping_address[lastname]"]').val() != '' && $('input[type=text][name="shipping_address[lastname]"]').val() != undefined) {
-								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="shipping_address[lastname]"]').val());
-							} else if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="payment_address[lastname]"]').val() != '') {
-								$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="payment_address[lastname]"]').val());
-							}
-							if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="shipping_address[city]"]').val() != '' && $('input[type=text][name="shipping_address[city]"]').val() != undefined) {
-								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="shipping_address[city]"]').val());
-							} else if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="payment_address[city]"]').val() != '') {
-								$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="payment_address[city]"]').val());
-							}
-							if($('input[type=text][name="litemf[region]"]').val() == '' && $('#shipping_address_zone_id option:selected').text() != '') {
-								$('input[type=text][name="litemf[region]"]').val($('#shipping_address_zone_id option:selected').text());
-							} else if($('input[type=text][name="litemf[region]"]').val() == '' && $('#payment_address_zone_id option:selected').text() != '') {
-								$('input[type=text][name="litemf[region]"]').val($('#payment_address_zone_id option:selected').text());
-							}
-							if($('input[type=text][name="litemf[phone]"]').val() == '') {
-								$('input[type=text][name="litemf[phone]"]').val($('input[type=tel][name="customer[telephone]"]').val());
-							}
-							if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() != undefined) {
-								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="shipping_address[postcode]"]').val());
-							} else if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="payment_address[postcode]"]').val() != '') {
-								$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="payment_address[postcode]"]').val());
-							}
-							$('#shiptor_delivery_block').show();
-							$('input[type=hidden][name="litemf[delivery_method_id]"]').val($('input[name="shipping_method"]:checked').data('id'));
-							if ($('input[name="shipping_method"]:checked').data('category') == 'courier') {
-								$('#point-select').hide();
-								$('#courier-price').find('input').prop("checked", true);
-								$('input[type=hidden][name="litemf[delivery_point_id]"]').val('courier');
-								$('#courier-field').show();
-								$('#point-select').hide();
-								$('#YMapsID').hide();
-							}
-							if ($('input[name="shipping_method"]:checked').data('category') == 'terminal') {
-								if($('input[type=text][name="litemf[city]"]').val() != '') {
-									getDeliveryPoints($('input[type=text][name="litemf[city]"]').val(), $('input[name="shipping_method"]:checked').data('id'));
+							if (checkedMethod != undefined) {
+							var exploded = checkedMethod.split('.');
+							if (exploded[0] == 'litemf_delivery') {
+								if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="shipping_address[firstname]"]').val() != '' && $('input[type=text][name="shipping_address[firstname]"]').val() != undefined) {
+									$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="shipping_address[firstname]"]').val());
+								} else if($('input[type=text][name="litemf[first_name]"]').val() == '' && $('input[type=text][name="payment_address[firstname]"]').val() != '') {
+									$('input[type=text][name="litemf[first_name]"]').val($('input[type=text][name="payment_address[firstname]"]').val());
 								}
-								$('#point-select').show();
-								$('#YMapsID').show();
-								$('#courier-price').hide();
-								$('#courier-field').hide();
+								if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="shipping_address[lastname]"]').val() != '' && $('input[type=text][name="shipping_address[lastname]"]').val() != undefined) {
+									$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="shipping_address[lastname]"]').val());
+								} else if($('input[type=text][name="litemf[last_name]"]').val() == '' && $('input[type=text][name="payment_address[lastname]"]').val() != '') {
+									$('input[type=text][name="litemf[last_name]"]').val($('input[type=text][name="payment_address[lastname]"]').val());
+								}
+								if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="shipping_address[city]"]').val() != '' && $('input[type=text][name="shipping_address[city]"]').val() != undefined) {
+									$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="shipping_address[city]"]').val());
+								} else if($('input[type=text][name="litemf[city]"]').val() == '' && $('input[type=text][name="payment_address[city]"]').val() != '') {
+									$('input[type=text][name="litemf[city]"]').val($('input[type=text][name="payment_address[city]"]').val());
+								}
+								if($('input[type=text][name="litemf[region]"]').val() == '' && $('#shipping_address_zone_id option:selected').text() != '') {
+									$('input[type=text][name="litemf[region]"]').val($('#shipping_address_zone_id option:selected').text());
+								} else if($('input[type=text][name="litemf[region]"]').val() == '' && $('#payment_address_zone_id option:selected').text() != '') {
+									$('input[type=text][name="litemf[region]"]').val($('#payment_address_zone_id option:selected').text());
+								}
+								if($('input[type=text][name="litemf[phone]"]').val() == '') {
+									$('input[type=text][name="litemf[phone]"]').val($('input[type=tel][name="customer[telephone]"]').val());
+								}
+								if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() == '' && $('input[type=text][name="shipping_address[postcode]"]').val() != undefined) {
+									$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="shipping_address[postcode]"]').val());
+								} else if($('input[type=text][name="litemf[zip_code]"]').val() == '' && $('input[type=text][name="payment_address[postcode]"]').val() != '') {
+									$('input[type=text][name="litemf[zip_code]"]').val($('input[type=text][name="payment_address[postcode]"]').val());
+								}
+								$('#shiptor_delivery_block').show();
+								$('input[type=hidden][name="litemf[delivery_method_id]"]').val($('input[name="shipping_method"]:checked').data('id'));
+								if ($('input[name="shipping_method"]:checked').data('category') == 'courier') {
+									$('#point-select').hide();
+									$('#courier-price').find('input').prop("checked", true);
+									$('input[type=hidden][name="litemf[delivery_point_id]"]').val('courier');
+									$('#courier-field').show();
+									$('#point-select').hide();
+									$('#YMapsID').hide();
+								}
+								if ($('input[name="shipping_method"]:checked').data('category') == 'terminal') {
+									if($('input[type=text][name="litemf[city]"]').val() != '') {
+										getDeliveryPoints($('input[type=text][name="litemf[city]"]').val(), $('input[name="shipping_method"]:checked').data('id'));
+									}
+									$('#point-select').show();
+									$('#YMapsID').show();
+									$('#courier-price').hide();
+									$('#courier-field').hide();
+								}
+							} else {
+								$('#shiptor_delivery_block').hide();
 							}
-						} else {
-							$('#shiptor_delivery_block').hide();
 						}
 					};
 				  $.ajax({
@@ -713,8 +717,8 @@
 							 $('#loader').hide();
 						 },
 						success: function (json) {
-							<?php if (isset($litemf)) ?>
-								var deliveryPointId = <?php echo $litemf['delivery_point_id']; ?>;
+							<?php if (isset($litemf)) { ?>
+								var deliveryPointId = '<?php echo $litemf['delivery_point_id']; ?>';
 							<?php } else { ?>;
 								var deliveryPointId = '';
 							<?php } ?>;
@@ -829,27 +833,33 @@
 		<operation error="skip">
 			<search><![CDATA[$this->session->data['order_id'] = $order_id;]]></search>
 			<add position="after"><![CDATA[
-				if ($data['shipping_code'] == 'litemf_delivery.litemf_delivery') {
-					$litemf_data = [];
-					$litemf_data['order_id'] = $this->session->data['order_id'];
-					$litemf_data['user_id'] = $data['customer_id'];
-					$litemf_data['passport'] = $this->session->data['litemf'];
-					if (isset($this->session->data['courier'])) {
-						$litemf_data['courier'] = $this->session->data['courier'];
+				if (isset($data['shipping_code']) && !empty($this->session->data['litemf'])) {
+					$shiptorMethod =  explode(".", $data['shipping_code']);
+					if ($shiptorMethod[0] == 'litemf_delivery') {
+						$litemf_data = [];
+						$litemf_data['order_id'] = $this->session->data['order_id'];
+						$litemf_data['user_id'] = $data['customer_id'];
+						$litemf_data['passport'] = $this->session->data['litemf'];
+						if (isset($this->session->data['courier'])) {
+							$litemf_data['courier'] = $this->session->data['courier'];
+						}
+						$this->load->model('shipping/litemf_delivery');
+						$this->model_shipping_litemf_delivery->addOrderLitemf($litemf_data);
 					}
-					$this->load->model('shipping/litemf_delivery');
-					$this->model_shipping_litemf_delivery->addOrderLitemf($litemf_data);
 				}
 			]]></add>
 		</operation>
 		<operation error="skip">
 			<search><![CDATA[foreach ($totals as $key => $value) {]]></search>
 			<add position="after"><![CDATA[
-				if ($this->session->data['shipping_method']['code'] == 'litemf_delivery.litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
-					$totals[$key]['value']= round($this->request->post['point'],2);
-				}
-				if ($this->session->data['shipping_method']['code'] == 'litemf_delivery.litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
-					$totals[$key] = $value['value'] + round($this->request->post['point'],2);
+				if (isset($this->session->data['shipping_method'])) {
+					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
+						$totals[$key]['value']= round($this->request->post['point'],2);
+					}
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
+						$totals[$key] = $value['value'] + round($this->request->post['point'],2);
+					}
 				}
 			]]></add>
 		</operation>
@@ -858,16 +868,19 @@
 		<operation error="skip">
 			<search><![CDATA[$sort_order[$key] = $value['sort_order'];]]></search>
 			<add position="after"><![CDATA[
-				if ($this->session->data['shipping_method']['code'] == 'litemf_delivery.litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
-                    $value['value'] = round($this->request->post['point'],2);
-                    $this->session->data['litemf'] = $this->request->post['litemf'];
-                    $this->session->data['courier'] = $this->request->post['courier'];
-                    if (isset($this->request->post['courier'])) {
+				if (isset($this->session->data['shipping_method'])) {
+					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
+						$value['value'] = round($this->request->post['point'],2);
+						$this->session->data['litemf'] = $this->request->post['litemf'];
 						$this->session->data['courier'] = $this->request->post['courier'];
+						if (isset($this->request->post['courier'])) {
+							$this->session->data['courier'] = $this->request->post['courier'];
+						}
 					}
-                }
-                if ($this->session->data['shipping_method']['code'] == 'litemf_delivery.litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
-                    $value['value'] = $value['value'] + round($this->request->post['point'],2);
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
+						$value['value'] = $value['value'] + round($this->request->post['point'],2);
+					}
                 }
 			]]></add>
 		</operation>

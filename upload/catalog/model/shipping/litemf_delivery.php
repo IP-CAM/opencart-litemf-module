@@ -35,10 +35,15 @@ class ModelShippingLitemfDelivery extends Model {
 							$cost = $this->getCost($weight, $kladr, $method->id);
 							$cost = $this->currency->convert($cost, 'EUR', $this->config->get('config_currency'));
 						}
+						if ($method->name == 'Express') {
+							$title = 'Доставка курьером';
+						} else {
+							$title = 'Доставка в пункт выдачи';
+						}
 						if ((string)$cost != '') {
 							$quote_data['litemf_delivery_' . $method->id] = array(
 								'code' => 'litemf_delivery.litemf_delivery_' . $method->id,
-								'title' => $method->name,
+								'title' => $title,
 								'cost' => $cost,
 								'tax_class_id' => $this->config->get('shiptor_delivery_tax_class_id'),
 								'text' => $this->currency->format($this->tax->calculate($cost, $this->config->get('shiptor_delivery_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
@@ -72,7 +77,7 @@ class ModelShippingLitemfDelivery extends Model {
 	}
 
 	protected function sendRequest($data, $apiKey) {
-		$ch = curl_init('http://api.dev.litemf.com/v2/rpc');
+		$ch = curl_init('https://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',

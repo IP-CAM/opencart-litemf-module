@@ -130,7 +130,7 @@ class ControllerCheckoutLitemf extends Controller {
 
 
 	protected function sendRequest($data, $apiKey) {
-		$ch = curl_init('http://api.litemf.com/v2/rpc');
+		$ch = curl_init('https://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',

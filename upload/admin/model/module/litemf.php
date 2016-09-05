@@ -14,7 +14,7 @@ class ModelModuleLitemf extends Model
 
 	public function sendRequest($data, $apiKey)
 	{
-		$ch = curl_init('http://api.dev.litemf.com/v2/rpc');
+		$ch = curl_init('https://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type: application/json',
@@ -186,7 +186,7 @@ class ModelModuleLitemf extends Model
 			}
 		}
 
-		$apiKey = 'e2f1a1ec2c5c51867d757879ad1f8789cb20c223';
+		$apiKey = $this->config->get('litemf_api_key');
 		$data['filter_order_status'] = $this->config->get('litemf_get_order');
 		$orders = $this->model_sale_order->getOrders($data);
 		foreach ($orders as $o) {

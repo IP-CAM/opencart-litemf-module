@@ -124,14 +124,17 @@ class ModelModuleLitemf extends Model
 		$data = $this->getLitemfPackageById($orderId);
 		$data['courier'] = '';
 		$dataCourier = $this->getLitemfCourierById($orderId);
-		if(isset($dataCourier)) {
-			$data['street'] = $dataCourier['street'];
-			$data['house'] = $dataCourier['house'];
+		if(!empty($dataCourier)) {
+			$data['street'] = empty($dataCourier['street']) ? $dataCourier['street'] : 111;
+			$data['house'] = empty($dataCourier['house']) ? $dataCourier['house'] : 111;
 			$data['phone'] = $dataCourier['phone'];
 			$data['courier'] = ' "flat":"'.$dataCourier['number'].'", "email":"'.$dataCourier['email'].'", ';
 		}
 		$phone = $str = preg_replace("/[^0-9]/", '', $data['phone']);
 		$date = new \DateTime($data['issue_date']);
+		$street = !empty($data['street']) ? $data['street'] : 111;
+		$house = !empty($data['house']) ? $data['house'] : 111;
+		$middleName = !empty($data['middle_name']) ? $data['middle_name'] : 111;
 		$data_string = '{
 			"id":"55deae2ec2f67",
 			"method":"createAddress",
@@ -141,13 +144,13 @@ class ModelModuleLitemf extends Model
 					"name":{
 						"last_name":"'.$data['last_name'].'",
 						"first_name":"'.$data['first_name'].'",
-						"middle_name":"'.$data['middle_name'].'"
+						"middle_name":"'.$middleName.'"
 					},
 					"delivery_country":3159,
 					'.$data['courier'].'
 					"first_line":{
-						"street":"'.$data['street'].'",
-						"house":"'.$data['house'].'"
+						"street":"'.$street.'",
+						"house":"'.$house.'"
 					},
 					"city":"'.$data['city'].'",
 					"region":"'.$data['region'].'",

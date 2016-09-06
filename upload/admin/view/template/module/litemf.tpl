@@ -300,6 +300,7 @@
             url: 'index.php?route=module/litemf/sendPackage&token=<?php echo $token; ?>&order_id=' + orderId,
             dataType: 'json',
             success: function (json) {
+                location.reload();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

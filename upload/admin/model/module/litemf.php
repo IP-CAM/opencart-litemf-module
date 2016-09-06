@@ -125,8 +125,8 @@ class ModelModuleLitemf extends Model
 		$data['courier'] = '';
 		$dataCourier = $this->getLitemfCourierById($orderId);
 		if(!empty($dataCourier)) {
-			$data['street'] = empty($dataCourier['street']) ? $dataCourier['street'] : 111;
-			$data['house'] = empty($dataCourier['house']) ? $dataCourier['house'] : 111;
+			$data['street'] = !empty($dataCourier['street']) ? $dataCourier['street'] : 111;
+			$data['house'] = !empty($dataCourier['house']) ? $dataCourier['house'] : 111;
 			$data['phone'] = $dataCourier['phone'];
 			$data['courier'] = ' "flat":"'.$dataCourier['number'].'", "email":"'.$dataCourier['email'].'", ';
 		}

@@ -109,6 +109,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <th>Id</th>
+                                <th>Opencart order Id</th>
                                 <th>City</th>
                                 <th>Status</th>
                                 <th>Isset passport</th>
@@ -119,6 +120,7 @@
                             <?php foreach($litemf_order_list as $order) { ?>
                                 <tr>
                                     <td><?php echo $order['litemf_orders']; ?></td>
+                                    <td><a href="/admin/index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=<?php echo $order['order_id']; ?>"><?php echo $order['order_id']; ?></a></td>
                                     <td><?php echo $order['city']; ?></td>
                                     <td><?php echo $order['status']; ?></td>
                                     <?php if(empty($order['first_name']) || empty($order['last_name']) || empty($order['middle_name']) || empty($order['street']) || empty($order['house']) || empty($order['region']) || empty($order['zip_code'])  || empty($order['phone']) || empty($order['series']) || empty($order['number']) || empty($order['issue_date']) || empty($order['issued_by'])) { ?>
@@ -146,6 +148,7 @@
                         <table class="table table-hover">
                             <thead>
                             <th>Id</th>
+                            <th>Opencart order Id</th>
                             <th>City</th>
                             <th>Status</th>
                             <th>Isset passport</th>
@@ -156,6 +159,7 @@
                             <?php foreach($litemf_order_list_send as $order) { ?>
                             <tr>
                                 <td><?php echo $order['litemf_orders']; ?></td>
+                                <td><a href="/admin/index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=<?php echo $order['order_id']; ?>"><?php echo $order['order_id']; ?></a></td>
                                 <td><?php echo $order['city']; ?></td>
                                 <td><?php echo $order['status']; ?></td>
                                 <?php if(empty($order['first_name']) || empty($order['last_name']) || empty($order['middle_name']) || empty($order['street']) || empty($order['house']) || empty($order['region']) || empty($order['zip_code'])  || empty($order['phone']) || empty($order['series']) || empty($order['number']) || empty($order['issue_date']) || empty($order['issued_by'])) { ?>

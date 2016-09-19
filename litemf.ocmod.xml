@@ -522,7 +522,7 @@
 							</div>
 							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-region">Регион</label>
-								<input type="text" name="litemf[region]" value="0" id="input-litemf-region" class="form-control">
+								<input type="text" name="litemf[region]" value="111" id="input-litemf-region" class="form-control">
 							</div>
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-city">Город</label>
@@ -530,17 +530,17 @@
 							</div>
 							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-zip_code">Индекс</label>
-								<input type="text" name="litemf[zip_code]" value="000000" id="input-litemf-zip_code" class="form-control">
+								<input type="text" name="litemf[zip_code]" value="111" id="input-litemf-zip_code" class="form-control">
 							</div>
 						</div>
 						<div class="col-sm-6">
 							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-street">Улица</label>
-								<input type="text" name="litemf[street]" value="0" id="input-litemf-street" class="form-control">
+								<input type="text" name="litemf[street]" value="111" id="input-litemf-street" class="form-control">
 							</div>
 							<div class="form-group required hidden">
 								<label class="control-label" for="input-litemf-house">Дом</label>
-								<input type="text" name="litemf[house]" value="0" id="input-litemf-house" class="form-control">
+								<input type="text" name="litemf[house]" value="111" id="input-litemf-house" class="form-control">
 							</div>
 							<div class="form-group required">
 								<label class="control-label" for="input-litemf-series">Серия</label>
@@ -854,10 +854,10 @@
 			<add position="after"><![CDATA[
 				if (isset($this->session->data['shipping_method'])) {
 					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
-					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping' && !empty($this->request->post['point'])) {
 						$totals[$key]['value']= round($this->request->post['point'],2);
 					}
-					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && !empty($this->request->post['point'])) {
 						$totals[$key] = $value['value'] + round($this->request->post['point'],2);
 					}
 				}
@@ -870,15 +870,17 @@
 			<add position="after"><![CDATA[
 				if (isset($this->session->data['shipping_method'])) {
 					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
-					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping' && isset($this->request->post['point'])) {
-						$value['value'] = round($this->request->post['point'],2);
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'shipping') {
+						if(!empty($this->request->post['point'])) {
+							$value['value'] = round($this->request->post['point'],2);
+						}
 						$this->session->data['litemf'] = $this->request->post['litemf'];
 						$this->session->data['courier'] = $this->request->post['courier'];
 						if (isset($this->request->post['courier'])) {
 							$this->session->data['courier'] = $this->request->post['courier'];
 						}
 					}
-					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && isset($this->request->post['point'])) {
+					if ($shiptorMethod[0] == 'litemf_delivery' && $value['code'] == 'total' && !empty($this->request->post['point'])) {
 						$value['value'] = $value['value'] + round($this->request->post['point'],2);
 					}
                 }

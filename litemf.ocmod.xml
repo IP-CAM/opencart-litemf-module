@@ -228,9 +228,13 @@
 					$shiptorMethod =  explode(".", $this->session->data['shipping_method']['code']);
 					if ($shiptorMethod[0] == 'litemf_delivery') {
 						$litemf_data = [];
-						$litemf_data['order_id'] = $this->session->data['order_id'];
+						if (isset($this->session->data['order_id'])) {
+							$litemf_data['order_id'] = $this->session->data['order_id'];
+						}
 						$litemf_data['user_id'] = $order_data['customer_id'];
-						$litemf_data['passport'] = $this->session->data['litemf'];
+						if (isset($this->session->data['litemf'])) {
+							$litemf_data['passport'] = $this->session->data['litemf'];
+						}
 						if (isset($this->session->data['courier'])) {
 							$litemf_data['courier'] = $this->session->data['courier'];
 						}
@@ -837,9 +841,16 @@
 					$shiptorMethod =  explode(".", $data['shipping_code']);
 					if ($shiptorMethod[0] == 'litemf_delivery') {
 						$litemf_data = [];
-						$litemf_data['order_id'] = $this->session->data['order_id'];
+						if(!empty($this->request->post['point'])) {
+							$value['value'] = round($this->request->post['point'],2);
+						}
+						if(!empty($this->session->data['order_id'])) {
+						    $litemf_data['order_id'] = $this->session->data['order_id'];
+						}
+						if(!empty($this->session->data['litemf'])) {
+						    $litemf_data['passport'] = $this->session->data['litemf'];
+						}
 						$litemf_data['user_id'] = $data['customer_id'];
-						$litemf_data['passport'] = $this->session->data['litemf'];
 						if (isset($this->session->data['courier'])) {
 							$litemf_data['courier'] = $this->session->data['courier'];
 						}
@@ -874,8 +885,12 @@
 						if(!empty($this->request->post['point'])) {
 							$value['value'] = round($this->request->post['point'],2);
 						}
-						$this->session->data['litemf'] = $this->request->post['litemf'];
-						$this->session->data['courier'] = $this->request->post['courier'];
+						if(!empty($this->request->post['litemf'])) {
+						    $this->session->data['litemf'] = $this->request->post['litemf'];
+						}
+						if(!empty($this->request->post['courier'])) {
+						    $this->session->data['courier'] = $this->request->post['courier'];
+						}
 						if (isset($this->request->post['courier'])) {
 							$this->session->data['courier'] = $this->request->post['courier'];
 						}
@@ -944,7 +959,6 @@
 								statusCourier = false
 							}
 						}
-
 					});
 					if (!statusCourier) {
 						return false;

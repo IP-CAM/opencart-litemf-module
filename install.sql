@@ -11,13 +11,14 @@ CREATE TABLE IF NOT EXISTS
         `address_id` INT DEFAULT NULL,
         `outgoing_package_id` INT DEFAULT NULL,
         `incoming_packages` CHAR(255) DEFAULT NULL,
+        `litemf_address_id` INT DEFAULT NULL,
         PRIMARY KEY(`id`)
     );
 DROP TABLE IF EXISTS `oc_litemf_address`;
 CREATE TABLE IF NOT EXISTS
     `oc_litemf_address` (
         `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
-        `litemf_orders` INT NOT NULL,
+        `user_id` INT DEFAULT NULL,
         `first_name` CHAR(30) NOT NULL,
         `last_name` CHAR(30) NOT NULL,
         `middle_name` CHAR(30) NOT NULL,

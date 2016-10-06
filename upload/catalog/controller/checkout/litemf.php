@@ -86,6 +86,19 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput(json_encode($points));
 	}
 
+	public function getPassportInfoById() {
+		$this->load->model('setting/setting');
+		$this->load->model('account/litemf');
+		$data['status'] = true;
+		$address_info = $this->model_account_litemf->getAddress($this->customer->getId());
+		$data['passport'] = $address_info;
+		if (!$address_info) {
+			$data['status'] = false;
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($data));
+	}
+
 	public function getDeliveryMethod() {
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');
@@ -98,8 +111,11 @@ class ControllerCheckoutLitemf extends Controller {
 				}
 			}';
 		$methods = $this->sendRequest($data, $apiKey);
+		$methods = json_decode($methods);
+		//var_dump($methods);die;
+		$methods->logged = $this->customer->isLogged();
 		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput($methods);
+		$this->response->setOutput(json_encode($methods));
 	}
 
 	/**

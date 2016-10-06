@@ -119,7 +119,7 @@
                             <tbody>
                             <?php foreach($litemf_order_list as $order) { ?>
                                 <tr>
-                                    <td><?php echo $order['litemf_orders']; ?></td>
+                                    <td><?php echo $order['litemf_order_id']; ?></td>
                                     <td><a href="/admin/index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=<?php echo $order['order_id']; ?>"><?php echo $order['order_id']; ?></a></td>
                                     <td><?php echo $order['city']; ?></td>
                                     <td><?php echo $order['status']; ?></td>
@@ -134,8 +134,8 @@
                                         <td><?php echo $order['tracking']; ?></td>
                                     <?php } ?>
                                     <td>
-                                        <button class="edit" data-order-id="<?php echo $order['litemf_orders']; ?>">Edit</button>
-                                        <button class="send-package" data-order-id="<?php echo $order['litemf_orders']; ?>">Send package</button>
+                                        <button class="edit" data-order-id="<?php echo $order['litemf_order_id']; ?>">Edit</button>
+                                        <button class="send-package" data-order-id="<?php echo $order['id']; ?>">Send package</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -158,7 +158,7 @@
                             <tbody>
                             <?php foreach($litemf_order_list_send as $order) { ?>
                             <tr>
-                                <td><?php echo $order['litemf_orders']; ?></td>
+                                <td><?php echo $order['litemf_order_id']; ?></td>
                                 <td><a href="/admin/index.php?route=sale/order/info&token=<?php echo $token; ?>&order_id=<?php echo $order['order_id']; ?>"><?php echo $order['order_id']; ?></a></td>
                                 <td><?php echo $order['city']; ?></td>
                                 <td><?php echo $order['status']; ?></td>

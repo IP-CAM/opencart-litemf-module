@@ -214,21 +214,21 @@ class ModelModuleLitemf extends Model
 	public function getLitemfPackage()
 	{
 		$this->db->query("DELETE l FROM " . DB_PREFIX . "litemf_orders AS l INNER JOIN " . DB_PREFIX . "order AS o ON ( l.order_id = o.order_id ) WHERE o.order_status_id =0");
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'unsend'");
+		$query = $this->db->query("SELECT *, lo.id as litemf_order_id FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'unsend'");
 
 		return $query->rows;
 	}
 
 	public function getLitemfPackageSend()
 	{
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'send'");
+		$query = $this->db->query("SELECT *, lo.id as litemf_order_id FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'send'");
 
 		return $query->rows;
 	}
 
 	public function getLitemfPackageById($id)
 	{
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'unsend' AND lo.id = '" . $id . "'");
+		$query = $this->db->query("SELECT *, lo.id as litemf_order_id FROM " . DB_PREFIX . "litemf_orders AS lo LEFT JOIN  " . DB_PREFIX . "litemf_address AS la ON ( la.id = lo.litemf_address_id ) WHERE lo.status =  'unsend' AND lo.id = '" . $id . "'");
 
 		return $query->row;
 	}

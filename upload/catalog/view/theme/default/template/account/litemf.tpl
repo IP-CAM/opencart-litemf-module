@@ -57,9 +57,6 @@
             <label class="col-sm-2 control-label" for="input-city"><?php echo $entry_city; ?></label>
             <div class="col-sm-10">
               <input type="text" name="city" value="<?php echo $city; ?>" placeholder="<?php echo $entry_city; ?>" id="input-city" class="form-control" />
-              <?php if ($error_city) { ?>
-              <div class="text-danger"><?php echo $error_city; ?></div>
-              <?php } ?>
             </div>
           </div>
           <div class="form-group required">

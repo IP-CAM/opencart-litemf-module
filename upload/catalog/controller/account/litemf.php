@@ -1,6 +1,6 @@
 <?php
 class ControllerAccountLitemf extends Controller {
-	public function index() {
+    public function index() {
         if (!$this->customer->isLogged()) {
             $this->session->data['redirect'] = $this->url->link('account/address', '', true);
 
@@ -8,28 +8,30 @@ class ControllerAccountLitemf extends Controller {
         }
         $this->load->model('account/litemf');
         if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+
             $this->model_account_litemf->addAddress($this->customer->getId(), $this->request->post);
         }
         $this->load->language('account/litemf');
+        $data['action'] = $this->url->link('account/litemf', '', true);
 
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['breadcrumbs'] = array();
 
         $data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home')
-		);
+            'text' => $this->language->get('text_home'),
+            'href' => $this->url->link('common/home')
+        );
 
         $data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_account'),
-			'href' => $this->url->link('account/account', '', true)
-		);
+            'text' => $this->language->get('text_account'),
+            'href' => $this->url->link('account/account', '', true)
+        );
 
         $data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('account/litemf', '', true)
-		);
+            'text' => $this->language->get('heading_title'),
+            'href' => $this->url->link('account/litemf', '', true)
+        );
 
         $data['heading_title'] = $this->language->get('heading_title');
 
@@ -40,25 +42,23 @@ class ControllerAccountLitemf extends Controller {
         $data['text_none'] = $this->language->get('text_none');
         $data['text_loading'] = $this->language->get('text_loading');
 
-        $data['entry_firstname'] = $this->language->get('entry_firstname');
-        $data['entry_lastname'] = $this->language->get('entry_lastname');
-        $data['entry_company'] = $this->language->get('entry_company');
-        $data['entry_address_1'] = $this->language->get('entry_address_1');
-        $data['entry_address_2'] = $this->language->get('entry_address_2');
-        $data['entry_postcode'] = $this->language->get('entry_postcode');
+        $data['entry_first_name'] = $this->language->get('entry_first_name');
+        $data['entry_last_name'] = $this->language->get('entry_last_name');
+        $data['entry_middle_name'] = $this->language->get('entry_middle_name');
+        $data['entry_phone'] = $this->language->get('entry_phone');
+        $data['entry_zip_code'] = $this->language->get('entry_zip_code');
+        $data['entry_region'] = $this->language->get('entry_region');
         $data['entry_city'] = $this->language->get('entry_city');
-        $data['entry_country'] = $this->language->get('entry_country');
-        $data['entry_zone'] = $this->language->get('entry_zone');
-        $data['entry_default'] = $this->language->get('entry_default');
+        $data['entry_street'] = $this->language->get('entry_street');
+        $data['entry_house'] = $this->language->get('entry_house');
+        $data['entry_series'] = $this->language->get('entry_series');
+        $data['entry_number'] = $this->language->get('entry_number');
+        $data['entry_issue_date'] = $this->language->get('entry_issue_date');
+        $data['entry_issued_by'] = $this->language->get('entry_issued_by');
 
         $data['button_continue'] = $this->language->get('button_continue');
         $data['button_back'] = $this->language->get('button_back');
         $data['button_upload'] = $this->language->get('button_upload');
-
-        $this->getForm();
-	}
-
-	protected function getForm() {
         $address_info = $this->model_account_litemf->getAddress($this->customer->getId());
         if (isset($this->request->post['first_name'])) {
             $data['first_name'] = $this->request->post['first_name'];
@@ -157,21 +157,21 @@ class ControllerAccountLitemf extends Controller {
         }
 
         if (isset($this->request->post['issued_by'])) {
-            $data['issue_date'] = $this->request->post['issued_by'];
+            $data['issued_by'] = $this->request->post['issued_by'];
         } elseif (!empty($address_info)) {
             $data['issued_by'] = $address_info['issued_by'];
         } else {
             $data['issued_by'] = '';
         }
 
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['column_right'] = $this->load->controller('common/column_right');
-		$data['content_top'] = $this->load->controller('common/content_top');
-		$data['content_bottom'] = $this->load->controller('common/content_bottom');
-		$data['footer'] = $this->load->controller('common/footer');
-		$data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['header'] = $this->load->controller('common/header');
 
 
-		$this->response->setOutput($this->load->view('account/litemf', $data));
-	}
+        $this->response->setOutput($this->load->view('account/litemf', $data));
+    }
 }

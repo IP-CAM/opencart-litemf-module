@@ -1022,4 +1022,20 @@
 			]]></add>
 		</operation>
 	</file>
+    <file path="catalog/view/theme/*/template/account/account.tpl">
+        <operation>
+            <search><![CDATA[<li><a href="<?php echo $edit; ?>"><?php echo $text_edit; ?></a></li>]]></search>
+            <add position="after"><![CDATA[
+				<li><a href="<?php echo $litemf; ?>">LiteMF Passport</a></li>
+			]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/account/account.php">
+        <operation>
+            <search><![CDATA[$data['edit'] = $this->url->link('account/edit', '', true);]]></search>
+            <add position="after"><![CDATA[
+				$data['litemf'] = $this->url->link('account/litemf', '', true);
+			]]></add>
+        </operation>
+    </file>
 </modification>

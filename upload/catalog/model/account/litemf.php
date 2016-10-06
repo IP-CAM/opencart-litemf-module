@@ -16,7 +16,7 @@ class ModelAccountLitemf extends Model {
 		$address_query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "litemf_address WHERE user_id = '" . (int)$user_id . "'");
 
 		if ($address_query->num_rows) {
-			return $address_query->rows;
+			return $address_query->row;
 		} else {
 			return false;
 		}

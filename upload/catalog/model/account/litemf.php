@@ -1,6 +1,8 @@
 <?php
-class ModelAccountLitemf extends Model {
-	public function addAddress($user_id, $data) {
+class ModelAccountLitemf extends Model
+{
+	public function addAddress($user_id, $data)
+	{
         $date = date_create($data['issue_date']);
         $date = date_format($date, 'Y-m-d H:i:s');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "litemf_address WHERE user_id = '" . (int)$user_id . "'");
@@ -12,13 +14,14 @@ class ModelAccountLitemf extends Model {
 		return $address_id;
 	}
 
-	public function getAddress($user_id) {
+	public function getAddress($user_id)
+	{
 		$address_query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "litemf_address WHERE user_id = '" . (int)$user_id . "'");
 
 		if ($address_query->num_rows) {
 			return $address_query->row;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 }

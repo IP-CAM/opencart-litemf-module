@@ -1,6 +1,7 @@
 <?php
 
-class ControllerModuleLitemf extends Controller {
+class ControllerModuleLitemf extends Controller
+{
 	private $error = array();
 
 	public function index()
@@ -20,12 +21,12 @@ class ControllerModuleLitemf extends Controller {
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
-		$data['entry_description'] = $this->language->get('entry_description');
 
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
 		$data['text_status'] = $this->language->get('text_status');
 
+		$data['entry_description'] = $this->language->get('entry_description');
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_set_order'] = $this->language->get('entry_set_order');
 		$data['entry_get_order'] = $this->language->get('entry_get_order');
@@ -123,6 +124,7 @@ class ControllerModuleLitemf extends Controller {
 		} else {
 			$data['litemf_timer'] = $this->config->get('litemf_timer');
 		}
+
 		$data['token'] = $this->session->data['token'];
 		$data['order_list'] = $this->model_module_litemf->getOrderStatusList();
 		$data['litemf_order_list'] = $this->model_module_litemf->getLitemfPackage();
@@ -174,7 +176,7 @@ class ControllerModuleLitemf extends Controller {
 		$this->model_module_litemf->updateLitemfOrder($this->request->get['order_id'], $addressResponse->result->address, implode(',',$response));
 
 		$createOutgoingPackage = $this->model_module_litemf->createOutgoingPackage($this->request->get['order_id']);
-		$createOutgoingPackageResponse = $this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
+		$this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
 		$this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode('Success'));

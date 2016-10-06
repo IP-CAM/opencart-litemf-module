@@ -2,13 +2,15 @@
 
 class ModelModuleLitemf extends Model
 {
-	public function getOrderStatusList() {
+	public function getOrderStatusList()
+	{
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status;");
 
 		return $query->rows;
 	}
 
-	public function updateOrder($orderId, $orderStatusId) {
+	public function updateOrder($orderId, $orderStatusId)
+	{
 		$this->db->query("UPDATE  " . DB_PREFIX . "order SET order_status_id = '" . (int)$orderStatusId . "' WHERE order_id = '".$orderId."'");
 	}
 
@@ -55,6 +57,7 @@ class ModelModuleLitemf extends Model
 				}
 			}';
 		}
+
 		return $data_string;
 	}
 
@@ -196,8 +199,8 @@ class ModelModuleLitemf extends Model
 			$order = $this->model_sale_order->getOrder($o['order_id']);
 			$package = $this->createPackage($order, $currency, $settings['config_invoice_prefix']);
 			$address = $this->createAddress($order);
-			$request = $this->sendRequest($package, $apiKey);
-			$request = $this->sendRequest($address, $apiKey);
+			$this->sendRequest($package, $apiKey);
+			$this->sendRequest($address, $apiKey);
 
 			$this->model_module_litemf->updateOrder($order['order_id'],  $this->config->get('litemf_set_order'));
 		}

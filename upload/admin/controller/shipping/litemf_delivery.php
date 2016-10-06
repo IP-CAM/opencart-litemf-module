@@ -1,8 +1,10 @@
 <?php
-class ControllerShippingLitemfDelivery extends Controller {
+class ControllerShippingLitemfDelivery extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('shipping/litemf_delivery');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -88,7 +90,8 @@ class ControllerShippingLitemfDelivery extends Controller {
 		$this->response->setOutput($this->load->view('shipping/litemf_delivery', $data));
 	}
 
-	protected function validate() {
+	protected function validate()
+	{
 		if (!$this->user->hasPermission('modify', 'shipping/litemf_delivery')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

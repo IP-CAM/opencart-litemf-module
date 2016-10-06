@@ -1,6 +1,8 @@
 <?php
-class ControllerAccountLitemf extends Controller {
-    public function index() {
+class ControllerAccountLitemf extends Controller
+{
+    public function index()
+    {
         if (!$this->customer->isLogged()) {
             $this->session->data['redirect'] = $this->url->link('account/address', '', true);
 
@@ -59,7 +61,9 @@ class ControllerAccountLitemf extends Controller {
         $data['button_continue'] = $this->language->get('button_continue');
         $data['button_back'] = $this->language->get('button_back');
         $data['button_upload'] = $this->language->get('button_upload');
+
         $address_info = $this->model_account_litemf->getAddress($this->customer->getId());
+
         if (isset($this->request->post['first_name'])) {
             $data['first_name'] = $this->request->post['first_name'];
         } elseif (!empty($address_info)) {
@@ -170,7 +174,6 @@ class ControllerAccountLitemf extends Controller {
         $data['content_bottom'] = $this->load->controller('common/content_bottom');
         $data['footer'] = $this->load->controller('common/footer');
         $data['header'] = $this->load->controller('common/header');
-
 
         $this->response->setOutput($this->load->view('account/litemf', $data));
     }

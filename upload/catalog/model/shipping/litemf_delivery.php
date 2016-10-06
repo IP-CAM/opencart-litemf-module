@@ -1,6 +1,8 @@
 <?php
-class ModelShippingLitemfDelivery extends Model {
-	function getQuote($address) {
+class ModelShippingLitemfDelivery extends Model
+{
+	function getQuote($address)
+	{
 		$this->load->language('shipping/litemf_delivery');
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('pickup_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
@@ -50,8 +52,7 @@ class ModelShippingLitemfDelivery extends Model {
 							);
 						}
 					}
-				} catch (Exception $e) {
-				}
+				} catch (Exception $e) {}
 
 				$method_data = array(
 					'code' => 'litemf_delivery',
@@ -66,7 +67,8 @@ class ModelShippingLitemfDelivery extends Model {
 		return $method_data;
 	}
 
-	public function addOrderLitemf($data) {
+	public function addOrderLitemf($data)
+	{
 		$date = date_create($data['passport']['issue_date']);
 		$date = date_format($date, 'Y-m-d H:i:s');
 		$pointId = $data['passport']['delivery_point_id'] == 'courier' ? null : $data['passport']['delivery_point_id'];
@@ -79,7 +81,8 @@ class ModelShippingLitemfDelivery extends Model {
 		}
 	}
 
-	protected function sendRequest($data, $apiKey) {
+	protected function sendRequest($data, $apiKey)
+	{
 		$ch = curl_init('https://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -95,7 +98,8 @@ class ModelShippingLitemfDelivery extends Model {
 		return $result;
 	}
 
-	public function getCost($weight, $kladr, $deliveryMethodId) {
+	public function getCost($weight, $kladr, $deliveryMethodId)
+	{
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');
 		$data = '{
@@ -113,10 +117,12 @@ class ModelShippingLitemfDelivery extends Model {
 		}';
 		$json = $this->sendRequest($data, $apiKey);
 		$jsonCostArray = json_decode($json);
+
 		return $jsonCostArray->result->data[0]->price;
 	}
 
-	public function getDeliveryMethod() {
+	public function getDeliveryMethod()
+	{
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');
 		$data = '{
@@ -128,6 +134,7 @@ class ModelShippingLitemfDelivery extends Model {
 				}
 			}';
 		$methods = $this->sendRequest($data, $apiKey);
+
 		return json_decode($methods);
 	}
 
@@ -154,6 +161,7 @@ class ModelShippingLitemfDelivery extends Model {
 		);
 		$context = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
+
 		return json_decode($result);
 	}
 }

@@ -1,6 +1,8 @@
 <?php
-class ControllerCheckoutLitemf extends Controller {
-	public function getCost() {
+class ControllerCheckoutLitemf extends Controller
+{
+	public function getCost()
+	{
 		$json = array();
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');;
@@ -31,9 +33,9 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput(json_encode($jsonCostArray));
 	}
 
-	public function getDeliveryPoints() {
+	public function getDeliveryPoints()
+	{
 		$points = [];
-		$json = array();
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');
 		$kladrResponse = $this->getKladr($this->request->get['city']);
@@ -58,18 +60,18 @@ class ControllerCheckoutLitemf extends Controller {
 		$jsonArray = json_decode($json);
 		foreach ($jsonArray->result->data as $point) {
 			$data = '{
-			"id":"56f1089cc9541",
-			"method":"getDeliveryPrice",
-			"params":{
-				"country_from":373,
-				"country_to":3159,
-				"weight":'.$this->cart->getWeight().',
-				"zone":"'.substr($kladr, 0, 11).'",
-				"delivery_point":"'.$point->id.'",
-				"filter":{
+				"id":"56f1089cc9541",
+				"method":"getDeliveryPrice",
+				"params":{
+					"country_from":373,
+					"country_to":3159,
+					"weight":'.$this->cart->getWeight().',
+					"zone":"'.substr($kladr, 0, 11).'",
+					"delivery_point":"'.$point->id.'",
+					"filter":{
+					}
 				}
-			}
-		}';
+			}';
 			$jsonCost = $this->sendRequest($data, $apiKey);
 			$jsonCostArray = json_decode($jsonCost);
 			$cost = $this->currency->convert(
@@ -86,11 +88,12 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput(json_encode($points));
 	}
 
-	public function getPassportInfoById() {
+	public function getPassportInfoById()
+	{
 		$this->load->model('setting/setting');
 		$this->load->model('account/litemf');
-		$data['status'] = true;
 		$address_info = $this->model_account_litemf->getAddress($this->customer->getId());
+		$data['status'] = true;
 		$data['passport'] = $address_info;
 		if (!$address_info) {
 			$data['status'] = false;
@@ -99,7 +102,8 @@ class ControllerCheckoutLitemf extends Controller {
 		$this->response->setOutput(json_encode($data));
 	}
 
-	public function getDeliveryMethod() {
+	public function getDeliveryMethod()
+	{
 		$this->load->model('setting/setting');
 		$apiKey = $this->config->get('litemf_api_key');
 		$data = '{
@@ -112,7 +116,6 @@ class ControllerCheckoutLitemf extends Controller {
 			}';
 		$methods = $this->sendRequest($data, $apiKey);
 		$methods = json_decode($methods);
-		//var_dump($methods);die;
 		$methods->logged = $this->customer->isLogged();
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($methods));
@@ -141,11 +144,13 @@ class ControllerCheckoutLitemf extends Controller {
 		);
 		$context = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
+
 		return json_decode($result);
 	}
 
 
-	protected function sendRequest($data, $apiKey) {
+	protected function sendRequest($data, $apiKey)
+	{
 		$ch = curl_init('https://api.litemf.com/v2/rpc');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -159,43 +164,5 @@ class ControllerCheckoutLitemf extends Controller {
 		$result = curl_exec($ch);
 
 		return $result;
-	}
-
-	protected function createAddressJson($data) {
-		$data_string = '{
-			"id":"55deae2ec2f67",
-			"method":"createAddress",
-			"params":{
-				"data":{
-					"format":"separated",
-					"name":{
-						"last_name":"Сидоров",
-						"first_name":"Петр",
-						"middle_name":"Иванович"
-					},
-					"delivery_country":3159,
-					"first_line":{
-						"street":"академика Королева",
-						"house":"12"
-					},
-					"city":"Москва",
-					"region":"Московская область",
-					"zip_code":"127427",
-					"phone":{
-						"country":"7",
-						"code":"800",
-						"number":"4444500"
-					},
-					"passport":{
-						"series":"0913",
-						"number":"8683591",
-						"issue_date":"2013-10-14",
-						"issued_by":"Отделом УФМС России по московской обл."
-					}
-				}
-			}
-		}';
-
-		return $data_string;
 	}
 }

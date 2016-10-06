@@ -499,7 +499,7 @@
 			<search><![CDATA[<div class="simplecheckout-warning-text"><?php echo $error_no_shipping; ?></div>]]></search>
 			<add position="after" offset="5"><![CDATA[
 			<style>
-			  @keyframes spinner {
+				@keyframes spinner {
 					to {transform: rotate(360deg);}
 				}
 
@@ -531,118 +531,250 @@
 					animation: spinner .6s linear infinite;
 					-webkit-animation: spinner .6s linear infinite;
 				}
-			  </style>
-				  <div class="row">
-					  	<div class="col-md-offset-1 col-md-9">
-							<p><input type="checkbox" id="check_passport" name="litemf[passport]">Заполнить паспортные данные заранее?</p>
-					  	</div>
-					  <div class="col-md-12" id="litemf_passport" style="display:none">
-					  	<h4>Паспортные данные</h4>
-						<div class="col-sm-6">
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-first_name">Имя</label>
-								<input type="text" name="litemf[first_name]" value="<?php if (isset($litemf)) echo $litemf['first_name']; ?>" id="input-litemf-first_name" pattern="[A-Za-zА-Яа-яЁё]" data-error="Имя должно быть от 1 до 32 символов!" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-last_name">Фамилия</label>
-								<input type="text" name="litemf[last_name]" value="<?php if (isset($litemf)) echo $litemf['last_name']; ?>" id="input-litemf-last_name" pattern="[A-Za-zА-Яа-яЁё]" data-error="Фамилия должна быть от 1 до 32 символов!"  class="form-control">
-							</div>
-							<div class="form-group">
-								<label class="control-label" for="input-litemf-middle_name">Отчество</label>
-								<input type="text" name="litemf[middle_name]" value="<?php if (isset($litemf)) echo $litemf['middle_name']; ?>" id="input-litemf-middle_name" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-phone">Телефон</label>
-								<input type="text" name="litemf[phone]" value="<?php if (isset($litemf)) echo $litemf['phone']; ?>"  id="input-litemf-phone" pattern="(\+?\d[- .]*){7,13}" data-error="Номер телефона должен быть от 3 до 13 символов!" class="form-control">
-							</div>
-							<div class="form-group required hidden">
-								<label class="control-label" for="input-litemf-region">Регион</label>
-								<input type="text" name="litemf[region]" value="111" id="input-litemf-region" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-city">Город</label>
-								<input type="text" name="litemf[city]" value="<?php if (isset($litemf)) echo $litemf['city']; ?>" id="input-litemf-city" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+"  data-error="Город должен быть 6 символов!" class="form-control">
-							</div>
-							<div class="form-group required hidden">
-								<label class="control-label" for="input-litemf-zip_code">Индекс</label>
-								<input type="text" name="litemf[zip_code]" value="111" id="input-litemf-zip_code" class="form-control">
-							</div>
+
+				@media (min-width: 0) {
+					.page-checkout-delivery {
+						margin-top: 20px;
+						margin-bottom: 20px;
+						font-size: 0;
+					}
+
+					.page-checkout-delivery #courier-price {
+						position: relative;
+						overflow-y: auto;
+						max-height: 400px;
+						padding-left: 30px;
+					}
+
+					.page-checkout-delivery #point-select {
+						overflow-y: auto;
+						max-height: 200px;
+					}
+
+					.page-checkout-delivery #YMapsID {
+						height: 400px;
+					}
+
+					.page-checkout-delivery__map {
+						font-size: 14px;
+					}
+
+					.page-checkout-delivery__outpost {
+						position: relative;
+						display: block !important;
+						margin-bottom: 8px;
+						font: 16px/18px 'BlockGothicCondensed',Haettenschweiler,'PFDinText',Impact,"Arial Narrow Bold","Arial Narrow",sans-serif;
+					}
+
+					.page-checkout-delivery__label {
+						width: 100%;
+                        padding: 6px 18px 6px 28px;
+                    }
+
+                    label.page-checkout-delivery__label {
+                    	display: block !important;
+                    }
+
+					.page-checkout-delivery__title,
+					.page-checkout-delivery__text {
+						margin-bottom: 4px;
+					}
+
+					.page-checkout-delivery__title {
+						font: 18px/22px 'BlockGothicCondensed',Haettenschweiler,'PFDinText',Impact,"Arial Narrow Bold","Arial Narrow",sans-serif;
+					}
+
+					.page-checkout-delivery__radio {
+						position: absolute;
+						top: 9px;
+						left: 8px;
+					}
+
+					.page-checkout-delivery__radio:checked + .page-checkout-delivery__label {
+						background-color: #f5f5f5;
+					}
+
+					.page-checkout-delivery__map {
+                        font-size: 14px;
+                    }
+
+                    .page-checkout-passport {
+                    	margin-top: 20px;
+                    	margin-bottom: 20px;
+                    }
+
+                    .page-checkout-passport__content {
+                    	max-width: 385px;
+                    }
+
+                    .page-checkout-passport__content .form-group {
+                    	margin-bottom: 20px;
+                    }
+
+                    .page-checkout-passport__content .form-group:last-child {
+                    	margin-bottom: 0;
+                    }
+
+                    .page-checkout-passport__content label {
+                    	display: none !important;
+                    }
+
+                    .page-checkout-passport__content input[type="text"] {
+                    	width: 100%;
+                    }
+				}
+
+				@media (min-width: 0) and (max-width: 980px) {
+					.page-checkout-delivery__items {
+						padding-bottom: 20px;
+					}
+				}
+
+				@media (min-width: 981px) {
+					.page-checkout-delivery #point-select {
+						max-height: 400px;
+					}
+
+					.page-checkout-delivery__items,
+					.page-checkout-delivery__map {
+						display: inline-block;
+						vertical-align: top;
+					}
+
+					.page-checkout-delivery__items {
+						width: 30%;
+					}
+
+					.page-checkout-delivery__map {
+						width: 70%;
+					}
+				}
+			</style>
+				<div class="page-checkout-passport">
+					<div>
+						<label><input type="checkbox" id="check_passport" name="litemf[passport]">Заполнить паспортные данные заранее?</label>
+					</div>
+					<div class="page-checkout-passport__content" id="litemf_passport" style="display:none">
+						<h2>Паспортные данные</h2>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-first_name">Имя</label>
+							<input type="text" name="litemf[first_name]" value="<?php if (isset($litemf)) echo $litemf['first_name']; ?>" id="input-litemf-first_name" pattern="[A-Za-zА-Яа-яЁё]" data-error="Имя должно быть от 1 до 32 символов!" class="form-control">
 						</div>
-						<div class="col-sm-6">
-							<div class="form-group required hidden">
-								<label class="control-label" for="input-litemf-street">Улица</label>
-								<input type="text" name="litemf[street]" value="111" id="input-litemf-street" class="form-control">
-							</div>
-							<div class="form-group required hidden">
-								<label class="control-label" for="input-litemf-house">Дом</label>
-								<input type="text" name="litemf[house]" value="111" id="input-litemf-house" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-series">Серия</label>
-								<input type="text" name="litemf[series]" value="<?php if (isset($litemf)) echo $litemf['series']; ?>" id="input-litemf-series" pattern="[0-9]{1,6}"  data-error="Серия должна быть от 2 до 6 символов!" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-number">Номер</label>
-								<input type="text" name="litemf[number]" value="<?php if (isset($litemf)) echo $litemf['number']; ?>" id="input-litemf-number" pattern="[0-9]{1,6}" data-error="Номер должен быть от 2 до 6 символов!" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-issue_date">Когда выдан</label>
-								<input type="text" name="litemf[issue_date]" value="<?php if (isset($litemf)) echo $litemf['issue_date']; ?>" id="input-litemf-issue_date" placeholder="22.05.2003" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}" data-error="Дата не верного формата!" class="form-control">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-issued_by">Кем выдан</label>
-								<input type="text" name="litemf[issued_by]" value="<?php if (isset($litemf)) echo $litemf['issued_by']; ?>" id="input-litemf-issued_by" class="form-control" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Поле должно быть от 3 до 64 символов!">
-							</div>
-							<input type="hidden" name="litemf[delivery_method_id]" value="<?php if (isset($litemf)) echo $litemf['delivery_method_id']; ?>">
-							<input type="hidden" name="litemf[delivery_point_id]" value="<?php if (isset($litemf)) echo $litemf['delivery_point_id']; ?>">
-							<input type="hidden" name="litemf[kladr]" value="<?php if (isset($litemf)) echo $litemf['kladr']; ?>">
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-last_name">Фамилия</label>
+							<input type="text" name="litemf[last_name]" value="<?php if (isset($litemf)) echo $litemf['last_name']; ?>" id="input-litemf-last_name" pattern="[A-Za-zА-Яа-яЁё]" data-error="Фамилия должна быть от 1 до 32 символов!"  class="form-control">
 						</div>
-					  </div>
-				  </div>
-				  	<div class="row">
-						<div class="col-md-4 list-group">
+						<div class="form-group">
+							<label class="control-label" for="input-litemf-middle_name">Отчество</label>
+							<input type="text" name="litemf[middle_name]" value="<?php if (isset($litemf)) echo $litemf['middle_name']; ?>" id="input-litemf-middle_name" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-phone">Телефон</label>
+							<input type="text" name="litemf[phone]" value="<?php if (isset($litemf)) echo $litemf['phone']; ?>"  id="input-litemf-phone" pattern="(\+?\d[- .]*){7,13}" data-error="Номер телефона должен быть от 3 до 13 символов!" class="form-control">
+						</div>
+						<div class="form-group required hidden">
+							<label class="control-label" for="input-litemf-region">Регион</label>
+							<input type="text" name="litemf[region]" value="111" id="input-litemf-region" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-city">Город</label>
+							<input type="text" name="litemf[city]" value="<?php if (isset($litemf)) echo $litemf['city']; ?>" id="input-litemf-city" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+"  data-error="Город должен быть 6 символов!" class="form-control">
+						</div>
+						<div class="form-group required hidden">
+							<label class="control-label" for="input-litemf-zip_code">Индекс</label>
+							<input type="text" name="litemf[zip_code]" value="111" id="input-litemf-zip_code" class="form-control">
+						</div>
+						<div class="form-group required hidden">
+							<label class="control-label" for="input-litemf-street">Улица</label>
+							<input type="text" name="litemf[street]" value="111" id="input-litemf-street" class="form-control">
+						</div>
+						<div class="form-group required hidden">
+							<label class="control-label" for="input-litemf-house">Дом</label>
+							<input type="text" name="litemf[house]" value="111" id="input-litemf-house" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-series">Серия</label>
+							<input type="text" name="litemf[series]" value="<?php if (isset($litemf)) echo $litemf['series']; ?>" id="input-litemf-series" pattern="[0-9]{1,6}"  data-error="Серия должна быть от 2 до 6 символов!" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-number">Номер</label>
+							<input type="text" name="litemf[number]" value="<?php if (isset($litemf)) echo $litemf['number']; ?>" id="input-litemf-number" pattern="[0-9]{1,6}" data-error="Номер должен быть от 2 до 6 символов!" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-issue_date">Когда выдан</label>
+							<input type="text" name="litemf[issue_date]" value="<?php if (isset($litemf)) echo $litemf['issue_date']; ?>" id="input-litemf-issue_date" placeholder="22.05.2003" pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}" data-error="Дата не верного формата!" class="form-control">
+						</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-issued_by">Кем выдан</label>
+							<input type="text" name="litemf[issued_by]" value="<?php if (isset($litemf)) echo $litemf['issued_by']; ?>" id="input-litemf-issued_by" class="form-control" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" data-error="Поле должно быть от 3 до 64 символов!">
+						</div>
+						<input type="hidden" name="litemf[delivery_method_id]" value="<?php if (isset($litemf)) echo $litemf['delivery_method_id']; ?>">
+						<input type="hidden" name="litemf[delivery_point_id]" value="<?php if (isset($litemf)) echo $litemf['delivery_point_id']; ?>">
+						<input type="hidden" name="litemf[kladr]" value="<?php if (isset($litemf)) echo $litemf['kladr']; ?>">
+					</div>
+				</div>
+				<div class="page-checkout-delivery">
+					<div class="page-checkout-delivery__items">
 						<div id="loader" class="spinner" style="display:none"></div>
-						<div id="courier-price" style="overflow-y: auto;padding-left: 30px;max-height: 400px;position: relative;display:none;"></div>
-						<div id="point-select" class="scroll-container" style="overflow-y: auto;padding-left: 30px;max-height: 400px;display:none;"></div>
-						</div>
-						<div id="YMapsID" style="height: 400px; display:none" class="col-md-8"></div>
+						<div id="courier-price" style="display:none;"></div>
+						<div id="point-select" class="scroll-container" style="display:none;"></div>
 					</div>
-					<div class="row" id="courier-field" style="display:none;">
-						<div class="col-sm-6">
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-courier-street">Улица</label>
-								<input type="text" name="courier[street]" value="<?php if (isset($courier)) echo $courier['street']; ?>" id="input-litemf-courier-street" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Улица должна быть от 3 до 64 символов!">
-							</div>
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-courier-email">E-Mail</label>
-								<input type="text" name="courier[email]" value="<?php if (isset($courier)) echo $courier['email']; ?>" id="input-litemf-courier-email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" class="form-control" data-error="Е-mail адрес введён неверно!">
-							</div>
+					<div id="YMapsID" style="display:none" class="page-checkout-delivery__map"></div>
+				</div>
+				<div class="row" id="courier-field" style="display:none;">
+					<div class="col-sm-6">
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-courier-street">Улица</label>
+							<input type="text" name="courier[street]" value="<?php if (isset($courier)) echo $courier['street']; ?>" id="input-litemf-courier-street" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Улица должна быть от 3 до 64 символов!">
 						</div>
-						<div class="col-sm-6">
-							<div class="col-sm-6">
-								<div class="form-group required">
-									<label class="control-label" for="input-litemf-courier-house">Дом</label>
-									<input type="text" name="courier[house]" value="<?php if (isset($courier)) echo $courier['house']; ?>" id="input-litemf-courier-house" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Дом должен быть от 1 до 10 символов!">
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group required">
-									<label class="control-label" for="input-litemf-courier-number">Квартира</label>
-									<input type="text" name="courier[number]" value="<?php if (isset($courier)) echo $courier['number']; ?>" id="input-litemf-courier-number" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Квартира должна быть от 1 до 10 символов!">
-								</div>
-							</div>
-							<div class="col-sm-12">
-								<div class="form-group required">
-									<label class="control-label" for="input-litemf-courier-phone">Телефон</label>
-									<input type="text" name="courier[phone]" value="<?php if (isset($courier)) echo $courier['phone']; ?>" id="input-litemf-courier-phone" pattern="(\+?\d[- .]*){7,13}" class="form-control" data-error="Номер телефона должен быть от 3 до 13 символов!" >
-								</div>
-							</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-courier-email">E-Mail</label>
+							<input type="text" name="courier[email]" value="<?php if (isset($courier)) echo $courier['email']; ?>" id="input-litemf-courier-email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" class="form-control" data-error="Е-mail адрес введён неверно!">
 						</div>
 					</div>
+					<div class="col-sm-6">
+						<div class="col-sm-6">
+							<div class="form-group required">
+								<label class="control-label" for="input-litemf-courier-house">Дом</label>
+								<input type="text" name="courier[house]" value="<?php if (isset($courier)) echo $courier['house']; ?>" id="input-litemf-courier-house" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Дом должен быть от 1 до 10 символов!">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group required">
+								<label class="control-label" for="input-litemf-courier-number">Квартира</label>
+								<input type="text" name="courier[number]" value="<?php if (isset($courier)) echo $courier['number']; ?>" id="input-litemf-courier-number" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Квартира должна быть от 1 до 10 символов!">
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group required">
+								<label class="control-label" for="input-litemf-courier-phone">Телефон</label>
+								<input type="text" name="courier[phone]" value="<?php if (isset($courier)) echo $courier['phone']; ?>" id="input-litemf-courier-phone" pattern="(\+?\d[- .]*){7,13}" class="form-control" data-error="Номер телефона должен быть от 3 до 13 символов!" >
+							</div>
+						</div>
+					</div>
+				</div>
 <script type="text/javascript">
-    var shippingMethods = $('input[type=radio][name=shipping_method]');
-    function getDeliveryPoints(city, id)
-    {
+    var shippingMethods = $('input:radio[name="shipping_method"]');
+    var deliveryPointTemplate = function (value, gps, checked) {
+    	return '<div class="page-checkout-delivery__outpost" data-role="outpost">\
+					<input type="radio"\
+						   name="point"\
+						   value="' + value['cost'] + '"\
+						   class="page-checkout-delivery__radio"\
+						   data-point-id="' + value['id'] + '"\
+						   id="pvz_label_' + value['id'] + '"\
+						   onClick="return go_to(' + gps[0] + ', ' + gps[1] + ', \'' + value['name'] + '\');"\
+						   ' + checked + '>\
+                    <label class="page-checkout-delivery__label" for="pvz_label_' + value['id'] + '">\
+                    	<h4 class="page-checkout-delivery__title">Цена: ' + value['price'] + '</h4>\
+                    	' + (value['name'] ? '<div class="page-checkout-delivery__text">' + value['name'] + '</div>' : '') + '\
+                    	' + (value['phone'] ? '<div class="page-checkout-delivery__text">' + value['phone'] + '</div>' : '') + '\
+                    	' + (value['address'] ? '<div class="page-checkout-delivery__text">' + value['address'] + '</div>' : '') + '\
+                    	' + (value['work_schedule'] ? '<div class="page-checkout-delivery__text">' + value['work_schedule'] + '</div>' : '') + '\
+                    </label>\
+                </div>';
+    };
+    function getDeliveryPoints(city, id) {
         $.ajax({
             url: 'index.php?route=checkout/litemf/getDeliveryPoints&city=' + city + '&id=' + id,
             dataType: 'json',
@@ -658,30 +790,28 @@
                 <?php } else { ?>;
                     var deliveryPointId = '';
                 <?php } ?>;
-                $('#point-select').text('');
+                $('#point-select').html('');
                 destroyMap();
                 createMap();
                 var myGeocoder = ymaps.geocode(city, {results: 1});
                 myGeocoder.then(function (res) {
                     var firstGeoObject = res.geoObjects.get(0);
-                    coords = firstGeoObject.geometry.getCoordinates();
+                    var text = '';
+                    var coords = firstGeoObject.geometry.getCoordinates();
                     setTown(coords[0], coords[1]);
                     $.each(json, function( index, value ) {
                         var checked = '';
+                        var gps = value.gps.split(',');
                         if (deliveryPointId == value.id) {
                             checked = 'checked';
                         }
                         do_search(value);
-                        var gps = value.gps.split(',');
-                        var text = '<div class="list-group-item" style="padding-left:25px;">';
-                        text += '<h4 class="list-group-item-heading"><input type="radio" name="point" value="' + value.cost + '" data-point-id="' + value.id + '" id="pvz_label_' + value.id + '" onClick="return go_to('+gps[0]+', '+gps[1]+',\''+value.name+'\');" ' + checked + '><span class="badge">Цена: ' + value.price + '</span> ' + value.name + '</h4>';
-                        text += '<span>' + value.phone + '</span>';
-                        text += '<p class="list-group-item-text">' + value.address + '</p>';
-                        text += '<p class="list-group-item-text">' + value.work_schedule + '</p></div>';
-                        $('#point-select').append(text);
-                        $('#point-select').show();
-                        $('#YMapsID').show();
+                        text += deliveryPointTemplate(value, gps, checked);
                     });
+					$('#point-select')
+						.html(text)
+						.show();
+					$('#YMapsID').show();
                 });
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -802,22 +932,22 @@
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });
+	}
 
-    $(document).ready(function() {
-        $('#point-select').on('change', 'input[type=radio][name=point]', function() {
+    $(document).on('ready', function() {
+        $('#point-select').on('change', 'input:radio[name="point"]', function() {
             if ($(this).data('point-id') != 'courier') {
-                $('input[type=hidden][name="litemf[delivery_point_id]"]').val($(this).data('point-id'))
+                $('input:hidden[name="litemf[delivery_point_id]"]').val($(this).data('point-id'))
             }
         });
-        $('#check_passport').change(function() {
-            if ( $('#check_passport').is( ":checked" ) ) {
+        $('#check_passport').on('change', function() {
+            if ($('#check_passport').is(':checked')) {
                 $('#litemf_passport').show()
             } else {
                 $('#litemf_passport').hide();
             }
         });
     });
-    }
 </script>
 <script type="text/javascript">
     var map;
@@ -860,7 +990,7 @@
         placemark.events.add('click', function(e) {
             var label = $('#pvz_label_' + item.id);
             label.prop("checked", true);
-            $('#point-select').scrollTo(label.parents('.list-group-item'), 300);
+            $('#point-select').scrollTo(label.parents('[data-role="outpost"]'), 300);
         });
         myCollection.add(placemark);
         map.geoObjects.add(myCollection);

@@ -214,6 +214,33 @@ class ModelModuleLitemf extends Model
 		}
 	}
 
+	public function createAddressYohji($orderId)
+	{
+		$data = $this->getLitemfPackageById($orderId);
+		$middleName = !empty($data['middle_name']) ? $data['middle_name'] : 111;
+		$data_string = '{
+			"id":"55deae2ec2f67",
+			"method":"createAddress",
+			"params":{
+				"data":{
+					"format":"international",
+					"name":{
+						"last_name":"'.$data['last_name'].'",
+						"first_name":"'.$data['first_name'].'",
+						"middle_name":"'.$middleName.'"
+					},
+					"delivery_country":'.(int) $data['country'].',
+					"first_line":"'.$data['address_line_1'].'",
+					"second_line":"'.$data['address_line_2'].'",
+					"city":"'.$data['city'].'",
+					"zip_code":"'.$data['zip_code'].'",
+				}
+			}
+		}';
+
+		return $data_string;
+	}
+
 	public function getLitemfPackage()
 	{
 		$this->db->query("DELETE l FROM " . DB_PREFIX . "litemf_orders AS l INNER JOIN " . DB_PREFIX . "order AS o ON ( l.order_id = o.order_id ) WHERE o.order_status_id =0");

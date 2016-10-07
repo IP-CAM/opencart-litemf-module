@@ -301,7 +301,7 @@
     $('.send-package').click(function(){
         var orderId = $(this).data('order-id');
         $.ajax({
-            url: 'index.php?route=module/litemf/sendPackage&token=<?php echo $token; ?>&order_id=' + orderId,
+            url: 'index.php?route=module/litemf/sendPackageYohji&token=<?php echo $token; ?>&order_id=' + orderId,
             dataType: 'json',
             success: function (json) {
                 location.reload();

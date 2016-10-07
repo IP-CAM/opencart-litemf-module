@@ -181,4 +181,25 @@ class ControllerModuleLitemf extends Controller
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode('Success'));
 	}
+
+	public function sendPackageYohji()
+	{
+		$response = [];
+		$this->load->model('module/litemf');
+		$apiKey = $this->config->get('litemf_api_key');
+		$incomingPackages = $this->model_module_litemf->createIncomingPackages($this->request->get['order_id']);
+		foreach ($incomingPackages as $package) {
+			$respons = $this->model_module_litemf->sendRequest($package, $apiKey);
+			$response[] = $respons->result->incoming_package;
+		}
+		$address = $this->model_module_litemf->createAddressYohji($this->request->get['order_id']);
+		$addressResponse = $this->model_module_litemf->sendRequest($address, $apiKey);
+		$this->model_module_litemf->updateLitemfOrder($this->request->get['order_id'], $addressResponse->result->address, implode(',',$response));
+
+		$createOutgoingPackage = $this->model_module_litemf->createOutgoingPackage($this->request->get['order_id']);
+		$this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
+		$this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode('Success'));
+	}
 }

@@ -598,28 +598,34 @@
                         font-size: 14px;
                     }
 
-                    .page-checkout-passport {
+                    .page-checkout-passport,
+                    .page-checkout-courier {
                     	margin-top: 20px;
                     	margin-bottom: 20px;
                     }
 
-                    .page-checkout-passport__content {
+                    .page-checkout-passport__content,
+                    .page-checkout-passport__courier {
                     	max-width: 385px;
                     }
 
-                    .page-checkout-passport__content .form-group {
+                    .page-checkout-passport__content .form-group,
+                    .page-checkout-passport__courier .form-group {
                     	margin-bottom: 20px;
                     }
 
-                    .page-checkout-passport__content .form-group:last-child {
+                    .page-checkout-passport__content .form-group:last-child,
+                    .page-checkout-passport__courier .form-group:last-child {
                     	margin-bottom: 0;
                     }
 
-                    .page-checkout-passport__content label {
+                    .page-checkout-passport__content label,
+                    .page-checkout-passport__courier label {
                     	display: none !important;
                     }
 
-                    .page-checkout-passport__content input[type="text"] {
+                    .page-checkout-passport__content input[type="text"],
+                    .page-checkout-passport__courier input[type="text"] {
                     	width: 100%;
                     }
 				}
@@ -721,35 +727,27 @@
 					</div>
 					<div id="YMapsID" style="display:none" class="page-checkout-delivery__map"></div>
 				</div>
-				<div class="row" id="courier-field" style="display:none;">
-					<div class="col-sm-6">
+				<div class="page-checkout-courier" id="courier-field" style="display:none;">
+					<div class="page-checkout-courier__content">
 						<div class="form-group required">
 							<label class="control-label" for="input-litemf-courier-street">Улица</label>
-							<input type="text" name="courier[street]" value="<?php if (isset($courier)) echo $courier['street']; ?>" id="input-litemf-courier-street" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Улица должна быть от 3 до 64 символов!">
+							<input type="text" name="courier[street]" value="<?php if (isset($courier)) echo $courier['street']; ?>" id="input-litemf-courier-street" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Улица должна быть от 3 до 64 символов!" placeholder="Улица">
 						</div>
 						<div class="form-group required">
 							<label class="control-label" for="input-litemf-courier-email">E-Mail</label>
-							<input type="text" name="courier[email]" value="<?php if (isset($courier)) echo $courier['email']; ?>" id="input-litemf-courier-email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" class="form-control" data-error="Е-mail адрес введён неверно!">
+							<input type="text" name="courier[email]" value="<?php if (isset($courier)) echo $courier['email']; ?>" id="input-litemf-courier-email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" class="form-control" data-error="Е-mail адрес введён неверно!" placeholder="E-Mail">
 						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="col-sm-6">
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-courier-house">Дом</label>
-								<input type="text" name="courier[house]" value="<?php if (isset($courier)) echo $courier['house']; ?>" id="input-litemf-courier-house" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Дом должен быть от 1 до 10 символов!">
-							</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-courier-house">Дом</label>
+							<input type="text" name="courier[house]" value="<?php if (isset($courier)) echo $courier['house']; ?>" id="input-litemf-courier-house" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Дом должен быть от 1 до 10 символов!" placeholder="Дом">
 						</div>
-						<div class="col-sm-6">
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-courier-number">Квартира</label>
-								<input type="text" name="courier[number]" value="<?php if (isset($courier)) echo $courier['number']; ?>" id="input-litemf-courier-number" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Квартира должна быть от 1 до 10 символов!">
-							</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-courier-number">Квартира</label>
+							<input type="text" name="courier[number]" value="<?php if (isset($courier)) echo $courier['number']; ?>" id="input-litemf-courier-number" pattern="[ a-zA-ZА-Яа-яЁё0-9,#.-]+" class="form-control" data-error="Квартира должна быть от 1 до 10 символов!" placeholder="Квартира">
 						</div>
-						<div class="col-sm-12">
-							<div class="form-group required">
-								<label class="control-label" for="input-litemf-courier-phone">Телефон</label>
-								<input type="text" name="courier[phone]" value="<?php if (isset($courier)) echo $courier['phone']; ?>" id="input-litemf-courier-phone" pattern="(\+?\d[- .]*){7,13}" class="form-control" data-error="Номер телефона должен быть от 3 до 13 символов!" >
-							</div>
+						<div class="form-group required">
+							<label class="control-label" for="input-litemf-courier-phone">Телефон</label>
+							<input type="text" name="courier[phone]" value="<?php if (isset($courier)) echo $courier['phone']; ?>" id="input-litemf-courier-phone" pattern="(\+?\d[- .]*){7,13}" class="form-control" data-error="Номер телефона должен быть от 3 до 13 символов!" placeholder="Телефон">
 						</div>
 					</div>
 				</div>

@@ -273,7 +273,7 @@ class ModelModuleLitemf extends Model
 	public function updateLitemfPackage($data)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "litemf_orders SET `tracking`='" . $data['tracking'] . "' WHERE id='" . (int)$data['order_id'] . "'");
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders WHERE lo.id = '" . (int)$data['order_id'] . "'");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders WHERE id = '" . (int)$data['order_id'] . "'");
 
         $litemfOrder =  $query->row;
 		$this->db->query("UPDATE " . DB_PREFIX . "litemf_address SET first_name='" . $data['first_name'] . "', last_name='" . $data['last_name'] . "', middle_name='" . $data['middle_name'] . "', street='" . $data['street'] . "', house='" . $data['house'] . "', city='" . $data['city'] . "', region='" . $data['region'] . "', zip_code='" . $data['zip_code'] . "', phone='" . $data['phone'] . "', series='" . $data['series'] . "', number='" . $data['number'] . "', issue_date='" . $data['issue_date'] . "', issued_by='" . $data['issued_by'] . "' WHERE id='" . $litemfOrder['litemf_address_id'] . "';");

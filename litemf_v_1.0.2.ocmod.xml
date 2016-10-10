@@ -9,21 +9,14 @@
 		<operation error="skip">
 			<search><![CDATA[$this->session->data['order_id'] = $order_id;]]></search>
 			<add position="after"><![CDATA[
-				if (isset($data['shipping_code'])) {
-					$litemf_data = [];
-					if(!empty($this->request->post['point'])) {
-						$value['value'] = round($this->request->post['point'],2);
-					}
-					if(!empty($this->session->data['order_id'])) {
-						$litemf_data['order_id'] = $this->session->data['order_id'];
-					}
-					if(!empty($this->request->post['shipping_address'])) {
-						$litemf_data['passport'] = $this->request->post['shipping_address'];
-					}
-					$litemf_data['user_id'] = $data['customer_id'];
-					$this->load->model('shipping/litemf_delivery');
-					$this->model_shipping_litemf_delivery->addOrderLitemfYohji($litemf_data);
+				$litemf_data = [];
+				if(!empty($this->session->data['order_id'])) {
+					$litemf_data['order_id'] = $this->session->data['order_id'];
 				}
+				$litemf_data['passport'] = $data;
+				$litemf_data['user_id'] = $data['customer_id'];
+				$this->load->model('shipping/litemf_delivery');
+				$this->model_shipping_litemf_delivery->addOrderLitemfYohji($litemf_data);
 			]]></add>
 		</operation>
 	</file>

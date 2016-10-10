@@ -84,53 +84,61 @@ class ModelShippingLitemfDelivery extends Model
 	public function addOrderLitemfYohji($data)
 	{
         $deliveryAddress = $this->getDeliveryAddress($data);
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "country WHERE id = '" . (int)$data['country_id']."'");
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "country WHERE country_id = '" . (int)$data['passport']['shipping_country_id']."'");
 		$country = $query->row;
-        $countryCode = $this->getCountry(mb_strtolower($country['iso_code_2']));
-        $methods = $this->getDeliveryMethod($countryCode);
-        $shippingMethod = $methods->result->data[0];
+        $countryId = $this->getCountry(mb_strtolower($country['iso_code_2']));
+        $methods = $this->getDeliveryMethod($countryId);
+        if (!empty($methods->result->data)) {
+            $shippingMethod = $methods->result->data[0];
 
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "litemf_address` SET
-		                    first_name = '" . $deliveryAddress['first_name'] . "',
-		                    last_name = '" . $deliveryAddress['last_name'] . "',
-		                    middle_name = '" . $deliveryAddress['middle_name'] . "',
-		                    street = '" . $deliveryAddress['street'] . "',
-		                    house = '" . $deliveryAddress['house'] . "',
-		                    city = '" . $deliveryAddress['city'] . "',
-		                    country = '" . $countryCode . "',
-		                    region = '" . $deliveryAddress['region'] . "',
-		                    zip_code = '" . $deliveryAddress['passport']['zip_code'] . "',
-		                    phone = '" . $deliveryAddress['phone'] . "'
-		                    address_line_1 = '" . $deliveryAddress['address_line_1'] . "',
-		                    address_line_2 = '" . $deliveryAddress['address_line_2'] . "'");
+            $this->db->query(
+                "INSERT INTO `".DB_PREFIX."litemf_address` SET
+		                    first_name = '".$deliveryAddress['first_name']."',
+		                    last_name = '".$deliveryAddress['last_name']."',
+		                    middle_name = '".$deliveryAddress['middle_name']."',
+		                    street = '".$deliveryAddress['street']."',
+		                    house = '".$deliveryAddress['house']."',
+		                    city = '".$deliveryAddress['city']."',
+		                    country = '".$countryId."',
+		                    region = '".$deliveryAddress['region']."',
+		                    zip_code = '".$deliveryAddress['zip_code']."',
+		                    phone = '".$deliveryAddress['phone']."',
+		                    address_line_1 = '".$deliveryAddress['address_line_1']."',
+		                    address_line_2 = '".$deliveryAddress['address_line_2']."'"
+            );
 
-        $litemf_address_id = $this->db->getLastId();
+            $litemf_address_id = $this->db->getLastId();
 
-        $this->db->query("INSERT INTO `" . DB_PREFIX . "litemf_orders` SET
-		                    litemf_address_id = '" . (int)$litemf_address_id . "',
+            $this->db->query(
+                "INSERT INTO `".DB_PREFIX."litemf_orders` SET
+		                    litemf_address_id = '".(int)$litemf_address_id."',
 		                    status = 'unsend',
-		                    user_id = '" . (int)$deliveryAddress['user_id'] . "',
-		                    order_id = '" . $this->db->escape($deliveryAddress['order_id']) . "',
-		                    delivery_method_id = '" . $shippingMethod->id . "'");
+		                    user_id = '".(int)$deliveryAddress['user_id']."',
+		                    order_id = '".$this->db->escape($deliveryAddress['order_id'])."',
+		                    delivery_method_id = '".$shippingMethod->id."'"
+            );
+        }
 	}
 
     public function getDeliveryAddress($data)
     {
         $result = [];
-        $result['country_id'] = !empty($data['passport']['country_id']) ? $data['passport']['country_id'] : 'ru';
-        $result['first_name'] = !empty($data['passport']['firstname']) ? $data['passport']['firstname'] : '';
-        $result['last_name'] = !empty($data['passport']['lastname']) ? $data['passport']['lastname'] : '';
-        $result['middle_name'] = !empty($data['passport']['middle_name']) ? $data['passport']['middle_name'] : '';
-        $result['city'] = !empty($data['passport']['city']) ? $data['passport']['city'] : '';
-        $result['street'] = !empty($data['passport']['street']) ? $data['passport']['street'] : '';
-        $result['house'] = !empty($data['passport']['house']) ? $data['passport']['house'] : '';
-        $result['region'] = !empty($data['passport']['region']) ? $data['passport']['region'] : '';
-        $result['zip_code'] = !empty($data['passport']['postcode']) ? $data['passport']['postcode'] : '';
-        $result['phone'] = !empty($data['passport']['phone']) ? $data['passport']['phone'] : '';
+        $result['country_id'] = !empty($data['passport']['shipping_country_id']) ? $data['passport']['shipping_country_id'] : 'ru';
+        $result['first_name'] = !empty($data['passport']['shipping_firstname']) ? $data['passport']['shipping_firstname'] : '';
+        $result['last_name'] = !empty($data['passport']['shipping_lastname']) ? $data['passport']['shipping_lastname'] : '';
+        $result['middle_name'] = !empty($data['passport']['shipping_middle_name']) ? $data['passport']['shipping_middle_name'] : '';
+        $result['city'] = !empty($data['passport']['shipping_city']) ? $data['passport']['shipping_city'] : '';
+        $result['street'] = !empty($data['passport']['shipping_street']) ? $data['passport']['shipping_street'] : '';
+        $result['house'] = !empty($data['passport']['shipping_house']) ? $data['passport']['shipping_house'] : '';
+        $result['region'] = !empty($data['passport']['shipping_region']) ? $data['passport']['shipping_region'] : '';
+        $result['zip_code'] = !empty($data['passport']['shipping_postcode']) ? $data['passport']['shipping_postcode'] : '';
+        $result['phone'] = !empty($data['passport']['shipping_phone']) ? $data['passport']['shipping_phone'] : '';
         $result['user_id'] = !empty($data['user_id']) ? $data['user_id'] : '';
         $result['order_id'] = !empty($data['order_id']) ? $data['order_id'] : '';
-        $result['address_line_1'] = !empty($data['address_1']) ? $data['address_1'] : '';
-        $result['address_line_2'] = !empty($data['address_2']) ? $data['address_2'] : '';
+        $result['address_line_1'] = !empty($data['passport']['shipping_address_1']) ? $data['passport']['shipping_address_1'] : '';
+        $result['address_line_2'] = !empty($data['passport']['shipping_address_2']) ? $data['passport']['shipping_address_2'] : '';
+
+        return $result;
     }
 
 	protected function sendRequest($data, $apiKey)
@@ -182,7 +190,7 @@ class ModelShippingLitemfDelivery extends Model
 			"method":"getCountry",
 			"params":{
 				"filter":{
-					"code":"'.$countryCode.'""
+					"code":"'.$countryCode.'"
 				}
 			}
 		}';
@@ -201,7 +209,7 @@ class ModelShippingLitemfDelivery extends Model
 				"method":"getDeliveryMethod",
 				"params":{
 					"country_from":373,
-					"country_to":'.$countryTo.'
+					"country_to":'.(int) $countryTo.'
 				}
 			}';
 		$methods = $this->sendRequest($data, $apiKey);

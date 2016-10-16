@@ -176,9 +176,10 @@ class ControllerModuleLitemf extends Controller
 		$this->model_module_litemf->updateLitemfOrder($this->request->get['order_id'], $addressResponse->result->address, implode(',',$response));
 
 		$createOutgoingPackage = $this->model_module_litemf->createOutgoingPackage($this->request->get['order_id']);
-		$this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
-		$this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
+        $createOutgoingPackageId = $this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
+        $this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
+		$this->model_module_litemf->updateLitemfOrderOutgoingPackageId($this->request->get['order_id'], $createOutgoingPackageId->result->outgoing_package);
 		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode('Success'));
+		$this->response->setOutput(json_encode('success'));
 	}
 }

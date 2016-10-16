@@ -69,6 +69,7 @@ class ModelShippingLitemfDelivery extends Model
 
 	public function addOrderLitemf($data)
 	{
+		$this->db->query("DELETE l FROM " . DB_PREFIX . "litemf_orders AS l WHERE l.order_id =".(int) $data['order_id']);
 		$date = date_create($data['passport']['issue_date']);
 		$date = date_format($date, 'Y-m-d H:i:s');
 		$pointId = $data['passport']['delivery_point_id'] == 'courier' ? null : $data['passport']['delivery_point_id'];

@@ -73,7 +73,7 @@ class ModelModuleLitemf extends Model
 		foreach ($products as $product) {
 			$cost = $this->currency->convert($product['total'], $opencartOrder['currency_code'], 'EUR');
 			$declaration .= '{
-				"description":"'.$product['name'].'",
+				"description":"description",
 								"quantity":'.$product['quantity'].',
 								"value":'.number_format($cost, 2, '.', '').'
 							}';
@@ -90,7 +90,7 @@ class ModelModuleLitemf extends Model
 					"incoming_packages":['. $package['incoming_packages'] .'],
 					"delivery_method":'.$package['delivery_method_id'].',
 					'.$point.'
-					"name":"'.$opencartOrder['store_name'].'",
+					"name":"'.$opencartOrder['store_name'].' - '.$opencartOrder['order_id'].'",
 					"partner_fid":"'.$opencartOrder['order_id'].'&'.$opencartOrder['invoice_prefix'].'",
 					"partner_url":"'.$opencartOrder['store_url'].'",
 					"comment":"'.$opencartOrder['comment'].'",
@@ -246,7 +246,7 @@ class ModelModuleLitemf extends Model
 	public function updateLitemfPackage($data)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "litemf_orders SET `tracking`='" . $data['tracking'] . "' WHERE id='" . (int)$data['order_id'] . "'");
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders WHERE lo.id = '" . (int)$data['order_id'] . "'");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "litemf_orders WHERE id = '" . (int)$data['order_id'] . "'");
 
         $litemfOrder =  $query->row;
 		$this->db->query("UPDATE " . DB_PREFIX . "litemf_address SET first_name='" . $data['first_name'] . "', last_name='" . $data['last_name'] . "', middle_name='" . $data['middle_name'] . "', street='" . $data['street'] . "', house='" . $data['house'] . "', city='" . $data['city'] . "', region='" . $data['region'] . "', zip_code='" . $data['zip_code'] . "', phone='" . $data['phone'] . "', series='" . $data['series'] . "', number='" . $data['number'] . "', issue_date='" . $data['issue_date'] . "', issued_by='" . $data['issued_by'] . "' WHERE id='" . $litemfOrder['litemf_address_id'] . "';");
@@ -267,6 +267,11 @@ class ModelModuleLitemf extends Model
 	public function updateLitemfOrder($order_id, $address_id, $incomingPackage)
 	{
 		$this->db->query("UPDATE " . DB_PREFIX . "litemf_orders SET `address_id`='" . $address_id . "', `incoming_packages`='" . $incomingPackage . "' WHERE id='" . (int)$order_id . "'");
+	}
+
+	public function updateLitemfOrderOutgoingPackageId($order_id, $outgoingPackageId)
+	{
+		$this->db->query("UPDATE " . DB_PREFIX . "litemf_orders SET `outgoing_package_id`='" . $outgoingPackageId . "' WHERE id='" . (int)$order_id . "'");
 	}
 
 	public function updateLitemfOrderStatus($order_id)

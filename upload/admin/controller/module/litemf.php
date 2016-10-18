@@ -166,20 +166,48 @@ class ControllerModuleLitemf extends Controller
 		$response = [];
 		$this->load->model('module/litemf');
 		$apiKey = $this->config->get('litemf_api_key');
-		$incomingPackages = $this->model_module_litemf->createIncomingPackages($this->request->get['order_id']);
-		foreach ($incomingPackages as $package) {
-			$respons = $this->model_module_litemf->sendRequest($package, $apiKey);
-			$response[] = $respons->result->incoming_package;
-		}
-		$address = $this->model_module_litemf->createAddress($this->request->get['order_id']);
-		$addressResponse = $this->model_module_litemf->sendRequest($address, $apiKey);
-		$this->model_module_litemf->updateLitemfOrder($this->request->get['order_id'], $addressResponse->result->address, implode(',',$response));
+        $package = $this->model_module_litemf->getLitemfPackageById($this->request->get['order_id']);
+        list($message, $status) = $this->validatePackage($package);
+        if ($status) {
+            $incomingPackages = $this->model_module_litemf->createIncomingPackages($this->request->get['order_id']);
+            foreach ($incomingPackages as $package) {
+                $respons = $this->model_module_litemf->sendRequest($package, $apiKey);
+                $response[] = $respons->result->incoming_package;
+            }
+            $address = $this->model_module_litemf->createAddress($this->request->get['order_id']);
+            $addressResponse = $this->model_module_litemf->sendRequest($address, $apiKey);
+            $this->model_module_litemf->updateLitemfOrder($this->request->get['order_id'], $addressResponse->result->address, implode(',',$response));
 
-		$createOutgoingPackage = $this->model_module_litemf->createOutgoingPackage($this->request->get['order_id']);
-        $createOutgoingPackageId = $this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
-        $this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
-		$this->model_module_litemf->updateLitemfOrderOutgoingPackageId($this->request->get['order_id'], $createOutgoingPackageId->result->outgoing_package);
+            $createOutgoingPackage = $this->model_module_litemf->createOutgoingPackage($this->request->get['order_id']);
+            $createOutgoingPackageId = $this->model_module_litemf->sendRequest($createOutgoingPackage, $apiKey);
+            $this->model_module_litemf->updateLitemfOrderStatus($this->request->get['order_id']);
+            $this->model_module_litemf->updateLitemfOrderOutgoingPackageId($this->request->get['order_id'], $createOutgoingPackageId->result->outgoing_package);
+        }
 		$this->response->addHeader('Content-Type: application/json');
-		$this->response->setOutput(json_encode('success'));
+		$this->response->setOutput(json_encode(['message' => $message, 'status' => $status]));
 	}
+
+    private function validatePackage($package)
+    {
+        if (empty($package['first_name']) || empty($package['last_name'])) {
+            return ['First name or last name is empty!', false];
+        }
+        if (empty($package['street']) || empty($package['house'])) {
+            return ['Street or house is empty!', false];
+        }
+        if (empty($package['city']) || empty($package['region'])) {
+            return ['City or region is empty!', false];
+        }
+        if (empty($package['zip_code']) || empty($package['phone'])) {
+            return ['Zip code or phone is empty!', false];
+        }
+        if (empty($package['tracking'])) {
+            return ['Tracking is empty!', false];
+        }
+        if (empty($package['series']) || empty($package['number']) || empty($package['issued_date']) || empty($package['issued_by'])) {
+            return ['Passport data is empty!', false];
+        }
+
+        return ['Ok', true];
+    }
 }

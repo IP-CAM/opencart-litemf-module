@@ -135,7 +135,7 @@
                                     <?php } ?>
                                     <td>
                                         <button class="edit" data-order-id="<?php echo $order['litemf_order_id']; ?>">Edit</button>
-                                        <button class="send-package" data-order-id="<?php echo $order['id']; ?>">Send package</button>
+                                        <button class="send-package" data-order-id="<?php echo $order['litemf_order_id']; ?>">Send package</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -304,7 +304,11 @@
             url: 'index.php?route=module/litemf/sendPackage&token=<?php echo $token; ?>&order_id=' + orderId,
             dataType: 'json',
             success: function (json) {
-                location.reload();
+                if (json.status) {
+                    location.reload();
+                } else {
+                    alert(json.message);
+                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

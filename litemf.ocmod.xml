@@ -1026,7 +1026,7 @@
         <operation>
             <search><![CDATA[<li><a href="<?php echo $edit; ?>"><?php echo $text_edit; ?></a></li>]]></search>
             <add position="after"><![CDATA[
-				<li><a href="<?php echo $litemf; ?>">LiteMF Passport</a></li>
+				<li><a href="<?php echo $litemf; ?>">Мои паспортные данные</a></li>
 			]]></add>
         </operation>
     </file>

@@ -35,7 +35,7 @@
                     <input type="text" name="middle_name" value="<?php echo $middle_name; ?>" placeholder="<?php echo $entry_middle_name; ?>" id="input-middle_name" class="form-control" />
                 </div>
             </div>
-          <div class="form-group">
+          <div class="form-group hidden">
             <label class="col-sm-2 control-label" for="input-phone"><?php echo $entry_phone; ?></label>
             <div class="col-sm-10">
               <input type="text" name="phone" value="<?php echo $phone; ?>" placeholder="<?php echo $entry_phone; ?>" id="input-phone" class="form-control" />
@@ -53,19 +53,19 @@
               <input type="text" name="region" value="<?php echo $region; ?>" placeholder="<?php echo $entry_region; ?>" id="input-address-2" class="form-control" />
             </div>
           </div>
-          <div class="form-group required">
+          <div class="form-group hidden">
             <label class="col-sm-2 control-label" for="input-city"><?php echo $entry_city; ?></label>
             <div class="col-sm-10">
               <input type="text" name="city" value="<?php echo $city; ?>" placeholder="<?php echo $entry_city; ?>" id="input-city" class="form-control" />
             </div>
           </div>
-          <div class="form-group required">
+          <div class="form-group hidden">
             <label class="col-sm-2 control-label" for="input-street"><?php echo $entry_street; ?></label>
             <div class="col-sm-10">
               <input type="text" name="street" value="<?php echo $street; ?>" placeholder="<?php echo $entry_street; ?>" id="input-street" class="form-control" />
             </div>
           </div>
-            <div class="form-group required">
+            <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-house"><?php echo $entry_house; ?></label>
                 <div class="col-sm-10">
                     <input type="text" name="house" value="<?php echo $house; ?>" placeholder="<?php echo $entry_house; ?>" id="input-house" class="form-control" />
@@ -97,7 +97,6 @@
             </div>
         </fieldset>
         <div class="buttons clearfix">
-          <div class="pull-left"><a href="<?php echo $back; ?>" class="btn btn-default"><?php echo $button_back; ?></a></div>
           <div class="pull-right">
             <input type="submit" value="<?php echo $button_continue; ?>" class="btn btn-primary" />
           </div>
